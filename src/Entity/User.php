@@ -21,7 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    private ?string $roles = null;
 
     /**
      * @var string The hashed password
@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $phone = null;
 
     #[ORM\Column(options: ['default' => 0])]
-    private ?int $etat = null;
+    private ?int $etat = 0;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Produit::class)]
     private Collection $produit;
@@ -75,6 +75,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reclamations = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->ratings = new ArrayCollection();
+        // set default value for etat field
+        // $this->etat = 0;
     }
 
     public function getId(): ?int
@@ -115,16 +117,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles(): string
     {
-        $roles = $this->roles;
+        return $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        // return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(string $roles): self
     {
         $this->roles = $roles;
 
