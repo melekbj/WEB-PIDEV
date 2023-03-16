@@ -54,7 +54,7 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
         }elseif($user->getRoles() == 'ROLE_PARTNER' and $user->getEtat() == 0 ){
             return new RedirectResponse($this->urlGenerator->generate('app_partner'));
         }elseif($user->getRoles() == 'ROLE_PARTNER' and $user->getEtat() == 1 ){
-            $request->getSession()->getFlashBag()->add('error', 'Your account is not active. Please contact support.');
+            $request->getSession()->getFlashBag()->add('info', 'Account pending approval. Please check your email for further instructions.');
             return new RedirectResponse($this->urlGenerator->generate('app_login'));
         }
 
