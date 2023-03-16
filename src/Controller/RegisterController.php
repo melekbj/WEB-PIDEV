@@ -34,6 +34,7 @@ class RegisterController extends AbstractController
             $entityManager = $doctrine->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
+            $request->getSession()->getFlashBag()->add('success', 'Account created successfully.');
             return $this->redirectToRoute('app_login');
         }
         return $this->render('register/index.html.twig', [

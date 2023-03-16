@@ -2143,7 +2143,7 @@ textarea.input {
   }
   #top-header .header-links.pull-right {
     float: none !important;
-    margin-top: 5px;
+    margin-top: 150px;
   }
   .header-logo {
     float: none;
@@ -2151,6 +2151,9 @@ textarea.input {
   }
   .header-logo .logo {
     display: inline-block;
+  }
+  .nameLogo{
+    margin-top: 200px;
   }
   #product-imgs {
     margin-bottom: 60px;
