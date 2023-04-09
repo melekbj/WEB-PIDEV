@@ -24,18 +24,18 @@ class Reclamation
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?commande $commande = null;
+    private ?Commande $commande = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?produit $produit = null;
+    private ?Produit $produit = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?user $client = null;
+    private ?User $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?user $admin = null;
+    private ?User $admin = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    #[ORM\ManyToOne(targetEntity: TypeReclamation::class, inversedBy: 'reclamations')]
     private ?TypeReclamation $type = null;
 
     public function getId(): ?int
@@ -79,55 +79,55 @@ class Reclamation
         return $this;
     }
 
-    public function getCommande(): ?commande
+    public function getCommande(): ?Commande
     {
         return $this->commande;
     }
 
-    public function setCommande(?commande $commande): self
+    public function setCommande(?Commande $commande): self
     {
         $this->commande = $commande;
 
         return $this;
     }
 
-    public function getProduit(): ?produit
+    public function getProduit(): ?Produit
     {
         return $this->produit;
     }
 
-    public function setProduit(?produit $produit): self
+    public function setProduit(?Produit $produit): self
     {
         $this->produit = $produit;
 
         return $this;
     }
 
-    public function getClient(): ?user
+    public function getClient(): ?User
     {
         return $this->client;
     }
 
-    public function setClient(?user $client): self
+    public function setClient(?User $client): self
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getAdmin(): ?user
+    public function getAdmin(): ?User
     {
         return $this->admin;
     }
 
-    public function setAdmin(?user $admin): self
+    public function setAdmin(?User $admin): self
     {
         $this->admin = $admin;
 
         return $this;
     }
 
-    public function getType(): ?TypeReclamation
+    public function getType(): ?TypeReclamation 
     {
         return $this->type;
     }

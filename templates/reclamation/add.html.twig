@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add Reclamation{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .is-invalid {
+            border: 2px solid red !important;
+        }
+
+        .is-valid {
+            border: 2px solid green !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1>Add Reclamation</h1>
+
+    {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data' } }) }}
+        {{ form_row(form.description, { 'attr': { 'class': 'form-control' } }) }}
+        {{ form_row(form.type) }}
+        {{ form_row(form.imageFile) }}
+
+        <small class="text-danger" id="description-error"></small>
+        <button type="submit" class="btn btn-primary">Reclamer</button>
+    {{ form_end(form) }}
+
+    {% for flash_message in app.session.flashbag.get('success') %}
+        <div class="alert alert-success">{{ flash_message }}</div>
+    {% endfor %}
+
+    <script>
+        const descriptionInput = document.querySelector('#reclamation_description');
+        const descriptionError = document.querySelector('#description-error');
+
+        descriptionInput.addEventListener('input', () => {
+            const words = descriptionInput.value.trim().split(' ').filter(word => word.length > 0);
+
+            if (words.length <= 2 || descriptionInput.value.length === 0) {
+                descriptionInput.classList.remove('is-valid');
+                descriptionInput.classList.add('is-invalid');
+                descriptionError.textContent = 'Description must contain at least 3 words.';
+            } else {
+                descriptionInput.classList.remove('is-invalid');
+                descriptionInput.classList.add('is-valid');
+                descriptionError.textContent = '';
+            }
+        });
+
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', (event) => {
+            const words = descriptionInput.value.trim().split(' ').filter(word => word.length > 0);
+
+            if (words.length <= 2 || descriptionInput.value.length === 0) {
+                event.preventDefault();
+                descriptionInput.classList.add('is-invalid');
+                descriptionError.textContent = 'Description must contain at least 3 words.';
+            }
+        });
+    </script>
+{% endblock %}
