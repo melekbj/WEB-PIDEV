@@ -16,15 +16,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Add Reclamation</h1>
+    <h1 class="text-center">Add Reclamation</h1>
 
     {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data' } }) }}
         {{ form_row(form.description, { 'attr': { 'class': 'form-control' } }) }}
         {{ form_row(form.type) }}
-        {{ form_row(form.imageFile) }}
 
         <small class="text-danger" id="description-error"></small>
-        <button type="submit" class="btn btn-primary">Reclamer</button>
+        <button type="submit">Reclamer</button>
     {{ form_end(form) }}
 
     {% for flash_message in app.session.flashbag.get('success') %}

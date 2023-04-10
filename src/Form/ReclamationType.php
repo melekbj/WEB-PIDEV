@@ -15,7 +15,7 @@ class ReclamationType extends AbstractType
     {
         $builder
             ->add('description', null, [
-                'label' => 'Reclamation',
+                'label' => 'Description',
             ])
             ->add('type', EntityType::class, [
                 'class' => TypeReclamation::class,

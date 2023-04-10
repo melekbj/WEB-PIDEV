@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!DOCTYPE html>
+
+
+  <h1 style="text-align:center;">List of Reclamations</h1>
+
+  <div class="table-responsive">
+    <table  <table style="border: 1px solid black ;margin: 0 auto;">
+>
+      <thead>
+        <tr>
+          <th style="border: 1px solid black;">ID</th>
+          <th style="border: 1px solid black;">Type</th>
+          <th style="border: 1px solid black;">Description</th>
+          <th style="border: 1px solid black;">Etat</th>
+          <th style="border: 1px solid black;">Date</th>
+          <th style="border: 1px solid black;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reclamation in reclamations %}
+          <tr>
+            <td style="border: 1px solid black;">{{ reclamation.id }}</td>
+                 <td style="border: 1px solid black;">{{ reclamation.type.nom }}</td>
+                <td style="border: 1px solid black;">{{ reclamation.description }}</td>
+                <td style="border: 1px solid black;">{{ reclamation.etat }}</td>
+                <td style="border: 1px solid black;">{{ reclamation.date|date('d/m/Y')}}</td>
+            <td>
+              <div class="d-flex justify-content-center">
+               <a href="{{ path('adminReclamationAccept', {'id': reclamation.id}) }}" style="background-color: green; color: white; margin-left: 2px; margin-right: 2px;">Accept</a>
+                <a href="{{ path('adminReclamationRefuse', {'id': reclamation.id}) }}" style="background-color: red; border-color: red; margin-left: 2px;color: white;">Refuse</a>
+
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

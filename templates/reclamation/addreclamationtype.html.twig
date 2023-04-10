@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add Reclamation Type{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Add Reclamation Type</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+
+        <button type="submit" class="btn btn-primary">Add Reclamation Type</button>
+    {{ form_end(form) }}
+
+    {% for flash_message in app.session.flashbag.get('success') %}
+        <div class="alert alert-success">{{ flash_message }}</div>
+    {% endfor %}
+{% endblock %}
