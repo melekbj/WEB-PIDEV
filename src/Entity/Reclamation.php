@@ -24,16 +24,16 @@ class Reclamation
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?commande $commande = null;
+    private ?Commande $commande = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?produit $produit = null;
+    private ?Produit $produit = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?user $client = null;
+    private ?User $client = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?user $admin = null;
+    private ?User $admin = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
     private ?TypeReclamation $type = null;

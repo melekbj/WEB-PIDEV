@@ -22,7 +22,7 @@ class Store
     private ?string $location = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?user $user = null;
+    private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: produit::class, inversedBy: 'stores')]
     private Collection $produit;
