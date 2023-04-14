@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+	<table border="5">
+		{% for produit in produits %}
+			<tr>
+
+				<td>
+					<h3>
+						<a href="#">
+							{{produit.nom}}
+						</a>
+					</h3>
+				</td>
+				<td>
+					<h4>$
+						{{produit.prix}}
+					</h4>
+				</td>
+				<td>
+					<h4>
+						Availelble quantity
+						{{produit.quantite}}
+					</h4>
+				</td>
+
+				<td>
+					<!-- <a href="{{path('app_cart_addscript',{'id':produit.id})}}" >Add to Cart</a> -->
+					{% set addToCartPath = path('app_cart_addscript', {'id': produit.id}) %}
+					<button type="button" onclick="addToCart('{{ addToCartPath }}')">Add to Cart</button>
+
+				</td>
+
+			</tr>
+		{% endfor %}
+	</table>
+
+
+	<script>
+		function addToCart(currentid) {
+
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', currentid, true);
+xhr.onload = function () {
+if (xhr.status === 200) {
+console.log('item added = ' + currentid);
+} else {
+console.log('Request failed.  Returned status of ' + xhr.status);
+}
+};
+xhr.send();
+}
+	</script>
+
+{% endblock %}

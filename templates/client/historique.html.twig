@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ClientController!
+{% endblock %}
+
+{% block body %}
+<br>
+<br>
+<br>
+<br>
+<br>
+{# Affichage Structure complete #}
+<form method="get" action="{{ path('app_historique') }}">
+	<label>État:</label>
+	<select name="etat">
+		<option value="">Tous</option>
+		<option value="Pending">Pending</option>
+		<option value="Progress">Progress</option>
+		<option value="Completed">Completed</option>
+	</select>
+	<label>Prix:</label>
+	<select name="prixOrder">
+		<option value="">Aucun</option>
+		<option value="ASC">Prix croissant</option>
+		<option value="DESC">Prix décroissant</option>
+	</select>
+	<label for="min">Min price</label>
+	<input name="min">
+	<label for="max">max price</label>
+	<input name="max">
+	<input type="submit" value="Filtrer">
+</form>
+<table border="5">
+	<th>
+		User id
+	</th>
+	<th>
+		Prix
+	</th>
+	<th>
+		Etat
+	</th>
+	<th>
+		button
+	</th>
+	<th>
+		details
+	</th>
+	<th>Destination</th>
+	{# Affichage historique Commande par Commande complete #}
+	{% for completeCommande in historiquecommande %}
+		<tr>
+			<td>
+				{{completeCommande.user.nom}}
+			</td>
+			<td>
+				{{completeCommande.prix }}
+			</td>
+			<td>
+				{{ completeCommande.etat }}
+
+			</td>
+			<td>
+				<form>
+					<input name="commandedetail" value="{{ completeCommande.id }}" hidden>
+					<input type="submit" value="commande detail">
+				</form>
+			</td>
+
+
+			<td>
+								{{ completeCommande.destination }}
+
+			</td>
+
+		</tr>
+	</td>
+</tr>{% endfor %}</table>
+    	{% if testinput is not null %}
+	
+{% set total=0 %} 
+				{% for detail in selecteddetails %}
+    {% set total = total + detail.produit.prix * detail.quantite %}
+					<div class="cart-list">
+						<div class="product-widget">
+							<div
+								class="product-img">
+								<!-- to modify with the item image-->
+								<img src="{{asset('Assets/img/product01.png')}}" alt="">
+							</div>
+							<div class="product-body">
+								<h3 class="product-name">
+									{{detail.produit.nom}}
+								</h3>
+								<h4 class="product-price">
+									<span class="qty"> {{detail.quantite}} x</span>
+									{{detail.produit.prix}}</h4>
+										<div class="cart-summary">
+					
+					<h5> ____Sub = {{detail.prixtotal}} </h5>
+				
+				</div>
+							</div>
+							<button class="delete">
+								<i class="fa fa-close"></i>
+							</button>
+						
+						</div>
+					</div>
+
+
+				{% endfor %}
+
+				<div class="cart-summary">
+					<small>{{ selecteddetails|length }}
+						Selected Items</small>
+					<h5> Total = {{total}} </h5>
+				</div>
+   {% endif %}
+
+   
+{% endblock %}
