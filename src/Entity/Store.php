@@ -21,10 +21,10 @@ class Store
     #[ORM\Column(length: 100)]
     private ?string $location = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?user $user = null;
+    #[ORM\OneToOne]
+    private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: produit::class, inversedBy: 'stores')]
+    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'stores')]
     private Collection $produit;
 
     #[ORM\OneToMany(mappedBy: 'store', targetEntity: DetailCommande::class)]
@@ -87,7 +87,7 @@ class Store
         return $this;
     }
 
-    public function getStore(): ?user
+    public function getStore(): ?Store
     {
         return $this->store;
     }

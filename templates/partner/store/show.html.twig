@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Store{% endblock %}
+
+{% block body %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+    <h1>Store</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ store.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ store.nom }}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>{{ store.location }}</td>
+            </tr>
+             <tr>
+                <th>Photo</th>
+                <td>
+                    {% if store.photo is not empty %}
+                        <img src="{{ asset('img/' ~ store.photo) }}" alt="{{ store.nom }} photo">
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Categorie</th>
+                <td>{{ store.Categorie.libelle }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_partner') }}">back to list</a>
+
+    <a href="{{ path('app_store_edit_partner', {'id': store.id}) }}">edit</a>
+
+{% endblock %}

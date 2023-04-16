@@ -39,28 +39,20 @@ class CategorieStoreRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return CategorieStore[] Returns an array of CategorieStore objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?CategorieStore
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function updateStoreCategoriesOnCategoryDelete(CategorieStore $category)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->innerJoin('c.stores', 's')
+            ->where('c.id = :categoryId')
+            ->setParameter('categoryId', $category->getId());
+    
+        $stores = $qb->getQuery()->getResult();
+    
+        foreach ($stores as $store) {
+            $store->removeCategoryFromStore($category);
+            $this->getEntityManager()->persist($store);
+        }
+    
+        $this->getEntityManager()->flush();
+    }
 }

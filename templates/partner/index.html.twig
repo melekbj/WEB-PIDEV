@@ -9,16 +9,12 @@
             You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
         </div>
     {% endif %}
-
-
-
-
-
-
-
-
-
-
+    
+  {% if store %}
+    {{ include('partner/store/show.html.twig') }}
+        {% else %}
+    {{ include('partner/store/new.html.twig') }}
+    {% endif %}
 
 
 {% endblock %}

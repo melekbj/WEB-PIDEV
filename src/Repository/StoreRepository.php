@@ -38,6 +38,14 @@ class StoreRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function findStoreByUserId(int $userId): ?Store
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
 //    /**
 //     * @return Store[] Returns an array of Store objects
