@@ -38,6 +38,7 @@ class StoreRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
     public function findStoreByUserId(int $userId): ?Store
     {
         return $this->createQueryBuilder('s')
@@ -45,6 +46,16 @@ class StoreRepository extends ServiceEntityRepository
             ->setParameter('userId', $userId)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return Store[] Returns an array of Store objects
+     */
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

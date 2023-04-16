@@ -39,20 +39,5 @@ class CategorieStoreRepository extends ServiceEntityRepository
         }
     }
 
-    public function updateStoreCategoriesOnCategoryDelete(CategorieStore $category)
-    {
-        $qb = $this->createQueryBuilder('c')
-            ->innerJoin('c.stores', 's')
-            ->where('c.id = :categoryId')
-            ->setParameter('categoryId', $category->getId());
-    
-        $stores = $qb->getQuery()->getResult();
-    
-        foreach ($stores as $store) {
-            $store->removeCategoryFromStore($category);
-            $this->getEntityManager()->persist($store);
-        }
-    
-        $this->getEntityManager()->flush();
-    }
+ 
 }

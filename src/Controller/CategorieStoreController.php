@@ -10,7 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-
+use App\Form\StoreType;
+use App\Repository\StoreRepository;
+use App\Entity\Store;
 
 #[Route('/categorie/store')]
 class CategorieStoreController extends AbstractController
@@ -40,14 +42,14 @@ class CategorieStoreController extends AbstractController
                 // Render the form again with the error message
                 return $this->renderForm('admin/categorie_store/new.html.twig', [
                     'categorie_store' => $categorieStore,
-                    'form' =>  $form->createView(),
+                    'form' =>  $form,
                 ]);
             }
         }
 
         return $this->renderForm('admin/categorie_store/new.html.twig', [
             'categorie_store' => $categorieStore,
-            'form' =>  $form->createView(),
+            'form' =>  $form,
         ]);
     }
 
@@ -76,25 +78,30 @@ class CategorieStoreController extends AbstractController
                 // Render the form again with the error message
                 return $this->renderForm('admin/categorie_store/edit.html.twig', [
                     'categorie_store' => $categorieStore,
-                    'form' =>  $form->createView(),
+                    'form' =>  $form,
                 ]);
             }
         }
 
         return $this->renderForm('admin/categorie_store/edit.html.twig', [
             'categorie_store' => $categorieStore,
-            'form' =>  $form->createView(),
+            'form' =>  $form,
         ]);
     }
 
     #[Route('/{id}', name: 'app_categorie_store_delete', methods: ['POST'])]
-    public function delete(Request $request, CategorieStore $categorieStore, CategorieStoreRepository $categorieStoreRepository): Response
+    public function delete(Request $request, $id, CategorieStore $categorieStore, StoreRepository $StoreRepository, CategorieStoreRepository $categorieStoreRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$categorieStore->getId(), $request->request->get('_token'))) {
-            $categorieStoreRepository->updateStoreCategoriesOnCategoryDelete($categorieStore);
+        $storedefault = $categorieStoreRepository->find('37');
+        $stores = $StoreRepository->findBy(['categorie' => $id]);
+        foreach ($stores as $store) {
+            $store->setCategorie($storedefault);
+            $StoreRepository->save($store, true);
+        }
+        if ($this->isCsrfTokenValid('delete' . $categorieStore->getId(), $request->request->get('_token'))) {
             $categorieStoreRepository->remove($categorieStore, true);
         }
-    
         return $this->redirectToRoute('app_categorie_store_index', [], Response::HTTP_SEE_OTHER);
     }
+    
 }
