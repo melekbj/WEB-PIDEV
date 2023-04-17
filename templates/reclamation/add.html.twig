@@ -4,60 +4,39 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .is-invalid {
-            border: 2px solid red !important;
-        }
-
-        .is-valid {
-            border: 2px solid green !important;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-wEwduWR2cKjEE0eZCjTYLHvR9yB32N1YYb2Gbwj7DL8=" crossorigin="anonymous" />
 {% endblock %}
 
 {% block body %}
-    <h1 class="text-center">Add Reclamation</h1>
+    <div class="container">
+    {% if app.flashes('error') %}
+    *
+{% endif %}
+        <h1 class="text-center mb-5">Add Reclamation</h1>
 
-    {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data' } }) }}
-        {{ form_row(form.description, { 'attr': { 'class': 'form-control' } }) }}
-        {{ form_row(form.type) }}
+        {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data', 'class': 'needs-validation' }, 'novalidate': 'novalidate' }) }}
+        <div class="form-group">
+            {{ form_label(form.description, 'Description') }}
+            {{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'placeholder': 'Enter a description' } }) }}
+            <div class="invalid-feedback">
+                Please enter a description with at least 3 words.
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form_label(form.type, 'Type') }}
+            {{ form_widget(form.type, { 'attr': { 'class': 'form-check-input' } }) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.image, 'Image (JPEG, PNG, or GIF file)') }}
+            {{ form_widget(form.image, { 'attr': { 'class': 'form-control-file' } }) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Reclamer</button>
+        {{ form_end(form) }}
 
-        <small class="text-danger" id="description-error"></small>
-        <button type="submit">Reclamer</button>
-    {{ form_end(form) }}
+        {% for flash_message in app.session.flashbag.get('success') %}
+            <div class="alert alert-success mt-3">{{ flash_message }}</div>
+        {% endfor %}
+   
 
-    {% for flash_message in app.session.flashbag.get('success') %}
-        <div class="alert alert-success">{{ flash_message }}</div>
-    {% endfor %}
-
-    <script>
-        const descriptionInput = document.querySelector('#reclamation_description');
-        const descriptionError = document.querySelector('#description-error');
-
-        descriptionInput.addEventListener('input', () => {
-            const words = descriptionInput.value.trim().split(' ').filter(word => word.length > 0);
-
-            if (words.length <= 2 || descriptionInput.value.length === 0) {
-                descriptionInput.classList.remove('is-valid');
-                descriptionInput.classList.add('is-invalid');
-                descriptionError.textContent = 'Description must contain at least 3 words.';
-            } else {
-                descriptionInput.classList.remove('is-invalid');
-                descriptionInput.classList.add('is-valid');
-                descriptionError.textContent = '';
-            }
-        });
-
-        const form = document.querySelector('form');
-
-        form.addEventListener('submit', (event) => {
-            const words = descriptionInput.value.trim().split(' ').filter(word => word.length > 0);
-
-            if (words.length <= 2 || descriptionInput.value.length === 0) {
-                event.preventDefault();
-                descriptionInput.classList.add('is-invalid');
-                descriptionError.textContent = 'Description must contain at least 3 words.';
-            }
-        });
-    </script>
+    
 {% endblock %}

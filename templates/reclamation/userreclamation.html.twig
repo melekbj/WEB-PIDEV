@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reclamations{% endblock %}
+
+{% block body %}
+    <h1 style="text-align:center;">Reclamations</h1>
+
+    <table style="border: 1px solid black ;margin: 0 auto;padding: 10px;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid black;">ID</th>
+                <th style="border: 1px solid black;">Etat</th>
+                <th style="border: 1px solid black;">Date</th>
+                <th style="border: 1px solid black;">Description</th>
+              
+            </tr>
+        </thead>
+        <tbody>
+            {% for reclamation in reclamations %}
+                <tr>
+                    <td  style="border: 1px solid black;">{{ reclamation.id }}</td>
+                    <td style="border: 1px solid black;">{{ reclamation.etat }}</td>
+                    <td style="border: 1px solid black;">{{ reclamation.date|date('d/m/Y') }}</td>
+                    <td style="border: 1px solid black;">{{ reclamation.description }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

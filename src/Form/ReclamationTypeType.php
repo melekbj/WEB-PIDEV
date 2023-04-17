@@ -17,6 +17,7 @@ class ReclamationTypeType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'New Type',
             ]);
+         
            
     }
 

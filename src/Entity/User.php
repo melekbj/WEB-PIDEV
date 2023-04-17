@@ -2,14 +2,23 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\HttpFoundation\File\File;
+
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['phone'], message: 'There is already an account with this phone number')]
+#[Vich\Uploadable]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -21,7 +30,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    private ?string $roles = null;
 
     /**
      * @var string The hashed password
@@ -40,18 +49,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
+    
+    #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     private ?string $image = null;
 
     #[ORM\Column(length: 10)]
     private ?string $genre = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
     private ?string $phone = null;
 
     #[ORM\Column(options: ['default' => 0])]
-    private ?int $etat = null;
+    private ?int $etat = 0;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Produit::class)]
     private Collection $produit;
@@ -75,6 +87,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reclamations = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->ratings = new ArrayCollection();
+        // set default value for etat field
+        // $this->etat = 0;
+        $this->ratingProduits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,16 +130,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles(): string
     {
-        $roles = $this->roles;
+        return $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // $roles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        // return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(string $roles): self
     {
         $this->roles = $roles;
 
@@ -411,4 +426,108 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+   
+    #[ORM\Column(length: 255,nullable:true)]
+    private ?string $resetToken;
+
+    #[ORM\Column(length: 255)]
+    private ?string $ville = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: RatingProduit::class)]
+    private Collection $ratingProduits;
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    // second
+
+    public function setForgotPasswordToken(string $token): self
+    {
+        $this->forgotPasswordToken = $token;
+
+        return $this;
+    }
+    public function setForgotPasswordTokenCreatedAt(\DateTimeImmutable $dateTime): self
+    {
+        $this->forgotPasswordTokenCreatedAt = $dateTime;
+    
+        return $this;
+    }
+
+    public function setForgotPasswordTokenMustBeVerifiedBefore(\DateTimeImmutable $dateTime): self
+    {
+        $this->forgotPasswordTokenMustBeVerifiedBefore = $dateTime;
+
+        return $this;
+    }
+
+    public function getVille(): ?string
+    {
+        return $this->ville;
+    }
+
+    public function setVille(string $ville): self
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RatingProduit>
+     */
+    public function getRatingProduits(): Collection
+    {
+        return $this->ratingProduits;
+    }
+
+    public function addRatingProduit(RatingProduit $ratingProduit): self
+    {
+        if (!$this->ratingProduits->contains($ratingProduit)) {
+            $this->ratingProduits->add($ratingProduit);
+            $ratingProduit->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRatingProduit(RatingProduit $ratingProduit): self
+    {
+        if ($this->ratingProduits->removeElement($ratingProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($ratingProduit->getUser() === $this) {
+                $ratingProduit->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setImageFile(File $image = null)
+    {
+        $this->imageFile = $image;
+
+        if ($image) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+    
 }

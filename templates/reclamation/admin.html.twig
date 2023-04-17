@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseAdmin.html.twig' %}
 
 {% block title %}Home{% endblock %}
 
@@ -17,7 +17,7 @@
                 <a  href="{{ path('addreclamationtype') }}" class="btn btn-primary btn-lg btn-block">Ajouter type réclamation</a>
             </div>
             <div class="col-md-4">
-                <a  class="btn btn-primary btn-lg btn-block">Statistiques réclamation</a>
+                <a  href="{{ path('reclamationstat') }}" class="btn btn-primary btn-lg btn-block">Statistiques réclamation</a>
             </div>
         </div>
     </div>

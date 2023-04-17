@@ -29,11 +29,15 @@ class Reclamation
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
     private ?Produit $produit = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reclamations')]
-    private ?User $client = null;
+    #[ORM\Column(name: "client_id")]
+    private ?int $client_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
     private ?User $admin = null;
+
+    #[ORM\Column(length: 255)]
+    private  $image;
+
 
     #[ORM\ManyToOne(targetEntity: TypeReclamation::class, inversedBy: 'reclamations')]
     private ?TypeReclamation $type = null;
@@ -74,9 +78,18 @@ class Reclamation
 
     public function setDescription(string $description): self
     {
+        
+    $words = explode(' ', trim($description));
+
+    if (count($words) <= 2) {
         $this->description = $description;
 
-        return $this;
+        throw new \Exception('Description must contain at least 3 words.');
+    }
+
+    $this->description = $description;
+
+    return $this;
     }
 
     public function getCommande(): ?Commande
@@ -103,14 +116,14 @@ class Reclamation
         return $this;
     }
 
-    public function getClient(): ?User
+    public function getClientId(): ?int
     {
-        return $this->client;
+        return $this->client_id;
     }
 
-    public function setClient(?User $client): self
+    public function setClientId(?int $client_id): self
     {
-        $this->client = $client;
+        $this->client_id = $client_id;
 
         return $this;
     }
@@ -138,4 +151,21 @@ class Reclamation
 
         return $this;
     }
+    
+    public function getimage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setimage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+    // ...
+
+  
+
+
 }

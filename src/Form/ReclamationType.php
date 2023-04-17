@@ -1,14 +1,14 @@
 <?php
-
 namespace App\Form;
 
-           
 use App\Entity\Reclamation;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\TypeReclamation;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+
 class ReclamationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -22,8 +22,12 @@ class ReclamationType extends AbstractType
                 'choice_label' => 'nom', // the property to use as the option label
                 'label' => 'Type',
                 'expanded' => true,
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'Image (JPEG, PNG, or GIF file)',
+                'required' => false,
             ]);
-            
+             
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -34,6 +38,4 @@ class ReclamationType extends AbstractType
     }
 }
 
-           
-           
-           
+
