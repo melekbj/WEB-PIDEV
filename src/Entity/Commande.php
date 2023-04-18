@@ -37,6 +37,11 @@ class Commande
     #[ORM\OneToMany(mappedBy: 'commande', targetEntity: Reclamation::class)]
     private Collection $reclamations;
 
+    #[ORM\Column(length: 27, nullable: true)]
+    private ?string $Payment = null;
+
+ 
+    #
     public function __construct()
     {
         $this->detailCommandes = new ArrayCollection();
@@ -96,12 +101,12 @@ class Commande
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
@@ -164,6 +169,18 @@ class Commande
                 $reclamation->setCommande(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPayment(): ?string
+    {
+        return $this->Payment;
+    }
+
+    public function setPayment(?string $Payment): self
+    {
+        $this->Payment = $Payment;
 
         return $this;
     }

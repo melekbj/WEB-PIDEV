@@ -79,7 +79,7 @@
 			</td>
             <td>
             
-    {% if completeCommande.etat !="Completed" %}
+    {% if completeCommande.etat !="Completed" && completeCommande.etat !="Canceled" %}
          <form>
 					<input name="commandedetail" value="{{ completeCommande.id }}" hidden>
                     <select name="etatswitch">

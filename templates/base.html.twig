@@ -330,7 +330,7 @@
 								<ul class="navbar_user">
 									<li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
                                     {% if app.user and app.user.getRoles() == 'ROLE_CLIENT'%}
-                                    <li><a href="{{path('app_client')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                                    <li><a href="{{path('app_historique')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
                                     
                                     {% elseif app.user and app.user.getRoles() == 'ROLE_ADMIN' %}
                                     <li><a href="{{path('app_admin')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
@@ -343,7 +343,7 @@
                                     
 									
 									<li class="checkout">
-										<a href="#">
+										<a href="{{path('app_cartview')}}">
 											<i class="fa fa-shopping-cart" aria-hidden="true"></i>
 											<span id="checkout_items" class="checkout_items">2</span>
 										</a>

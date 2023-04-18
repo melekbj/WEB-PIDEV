@@ -47,6 +47,7 @@
 		details
 	</th>
 	<th>Destination</th>
+	<th>Action</th>
 	{# Affichage historique Commande par Commande complete #}
 	{% for completeCommande in historiquecommande %}
 		<tr>
@@ -71,6 +72,11 @@
 			<td>
 								{{ completeCommande.destination }}
 
+			</td>
+			<td>
+			</td>
+			<td>
+				<a href="{{path('app_commande_delete' ,{'id': completeCommande.id})}}" > Delete</a>
 			</td>
 
 		</tr>

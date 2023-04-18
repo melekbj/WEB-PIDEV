@@ -11,13 +11,13 @@
 	<br>
 
 	<div>
-
+	   {% if error %}
 		<table>
 			<th>Erreur
 			</th>
 
 			<td>
-				==
+				
 				<h3 style="background-color: red;">
 					{{error}}</h3>
 
@@ -25,6 +25,7 @@
 
 
 		</table>
+		 {% endif %}
 
 	</div>
 	<div class="cart-list">

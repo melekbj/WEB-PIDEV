@@ -11,6 +11,7 @@ use App\Entity\Produit;
 use App\Entity\User;
 use App\Form\PaymentType;
 use App\Repository\CommandeRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,8 @@ use Stripe\Stripe;
 use Stripe\Card;
 use Stripe\Customer;
 use Stripe\Token;
+use Stripe\Refund;
+
 
 class ClientController extends AbstractController
 {
@@ -273,11 +276,12 @@ class ClientController extends AbstractController
                     'description' => 'My Awesome Ecommerce Payment',
                     'customer' => $customer->id, // add the customer to the charge
                 ]);
-
+                
                 // on sucess 
                 $totalPrice = 0;
                 $command = $session->get('commande');
                 $em->persist($command);
+                $command->setPayment($charge->id);
                 foreach ($cart as $productId => $quantity) {
                     $product = $em->getRepository(Produit::class)->find($productId);
                     $price = $product->getPrix() * $quantity;
@@ -317,5 +321,34 @@ class ClientController extends AbstractController
             'command' => $command,
         ]);
     }
+    #[Route('/delete/commande/{id}', name: 'app_commande_delete')]
+    public function delete_commande(CommandeRepository $commandeRepository,$id,EntityManagerInterface $em,Request $request): Response
+    {
+        Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
+
+        $commande = $commandeRepository->find($id);
+        if ($commande->getEtat()==="Pending")
+        {
+            $chargeid=$commande->getPayment();
+            $charge =Charge::retrieve($chargeid);
+            $refund = Refund::create([
+                'charge' => $charge->id,
+                'amount' => $charge->amount,
+            ]);
+         
+            if ($refund->status === 'succeeded') {
+                // Refund was 
+                $commande->setEtat("Canceled");
+                $em->persist($commande);
+                $em->flush();
+            }
+            
+        }
+    
+        
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
+    }
+
 
 }

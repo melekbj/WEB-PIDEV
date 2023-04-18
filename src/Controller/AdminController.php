@@ -114,7 +114,7 @@ class AdminController extends AbstractController
     #[Route('/profile', name: 'app_profile')]
     public function updateProfile(Request $request)
     {
-        
+        //....code
         return $this->render('admin/profile.html.twig', [
             
         ]);
