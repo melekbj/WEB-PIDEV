@@ -59,7 +59,7 @@ class PartnerController extends AbstractController
                 if ($d->getEtat() === "Progress") {
                     $countProgress++;
                 }
-                if ($d->getEtat() === "Completed") {
+                if ($d->getEtat() === "Completed" || $d->getEtat() === "Canceled" ) {
                     $countCompleted++;;
                 }
             }
@@ -67,12 +67,12 @@ class PartnerController extends AbstractController
             // Update the etat of the original commande if the minimum etat is less than the current etat
             $currentEtat = $originalCommande->getEtat();
             
-                if ($countProgress === 0) {
-                    if ($currentEtat === "Progress") {
+                if ($countProgress === 0 && $countPending === 0) {
+                    
                         $originalCommande->setEtat("Completed");
                         $entityManager->persist($originalCommande);
                         $entityManager->flush();
-                    }
+                    
                 } else {
                     $originalCommande->setEtat("Progress");
                     $entityManager->persist($originalCommande);

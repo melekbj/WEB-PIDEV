@@ -11,6 +11,7 @@ use App\Entity\Produit;
 use App\Entity\User;
 use App\Form\PaymentType;
 use App\Repository\CommandeRepository;
+use App\Repository\DetailCommandeRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,14 +34,14 @@ class ClientController extends AbstractController
             'controller_name' => 'ClientController',
         ]);
     }
-     
+
 
     #[Route('/historique', name: 'app_historique')]
     public function historique(Request $request, ManagerRegistry $doctrine, CommandeRepository $cc): Response
     {
-         $user=$this->getUser();
-         $client=$user->getId();
-         // $client = '1';
+        $user = $this->getUser();
+        $client = $user->getId();
+        // $client = '1';
         // Get the query parameters from the URL
         $etat = $request->query->get('etat');
         $order = $request->query->get('prixOrder');
@@ -165,10 +166,10 @@ class ClientController extends AbstractController
     #[Route('/cart/confirm', name: 'app_cart_confirm')]
     public function confirmercart(EntityManagerInterface $em, SessionInterface $session, Request $request)
     {
-       // $client = '1';
-        $user=$this->getUser();
-      //  $client=$user->getId();
-     //   $user = $em->getRepository(User::class)->find($client);
+        // $client = '1';
+        $user = $this->getUser();
+        //  $client=$user->getId();
+        //   $user = $em->getRepository(User::class)->find($client);
 
         $cart = $session->get('cart', []);
 
@@ -222,10 +223,10 @@ class ClientController extends AbstractController
     public function Payementprocess(EntityManagerInterface $em, SessionInterface $session, Request $request, ManagerRegistry $doctrine)
     {
 
-      //  $client = '1';
-      $user=$this->getUser();
-   //   $client=$user->getId();
-   //     $user = $em->getRepository(User::class)->find($client);
+        //  $client = '1';
+        $user = $this->getUser();
+        //   $client=$user->getId();
+        //     $user = $em->getRepository(User::class)->find($client);
 
         $cart = $session->get('cart', []);
 
@@ -241,7 +242,7 @@ class ClientController extends AbstractController
         $paymentForm->handleRequest($request);
         if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
             $paymentData = $paymentForm->getData();
-           
+
             // Set your Stripe API secret key
             Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
             // create a card object with the informations
@@ -276,7 +277,7 @@ class ClientController extends AbstractController
                     'description' => 'My Awesome Ecommerce Payment',
                     'customer' => $customer->id, // add the customer to the charge
                 ]);
-                
+
                 // on sucess 
                 $totalPrice = 0;
                 $command = $session->get('commande');
@@ -295,8 +296,8 @@ class ClientController extends AbstractController
                     $detailCommande->setPrixTotal($price);
                     $detailCommande->setEtat('Pending');
                     $em->persist($detailCommande);
-                }    
-                
+                }
+
                 $command->setUser($user);
                 $em->flush();  // only after the charge is succesfull
                 $session->remove('commande');
@@ -322,33 +323,101 @@ class ClientController extends AbstractController
         ]);
     }
     #[Route('/delete/commande/{id}', name: 'app_commande_delete')]
-    public function delete_commande(CommandeRepository $commandeRepository,$id,EntityManagerInterface $em,Request $request): Response
+    public function delete_commande(CommandeRepository $commandeRepository, $id, EntityManagerInterface $em, Request $request): Response
     {
         Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
 
         $commande = $commandeRepository->find($id);
-        if ($commande->getEtat()==="Pending")
-        {
-            $chargeid=$commande->getPayment();
-            $charge =Charge::retrieve($chargeid);
+        if ($commande->getEtat() === "Pending") {
+            $chargeid = $commande->getPayment();
+            $charge = Charge::retrieve($chargeid);
             $refund = Refund::create([
                 'charge' => $charge->id,
-                'amount' => $charge->amount,
+                'amount' => $commande->getPrix(),
             ]);
-         
+
             if ($refund->status === 'succeeded') {
-                // Refund was 
+                // Refund was succefull
                 $commande->setEtat("Canceled");
+                $details = $commande->getDetailCommandes();
+                foreach ($details as $detail) {
+                    $detail->setEtat("Canceled");
+                    # code...
+                }
+                $commande->setPrix('0');
                 $em->persist($commande);
                 $em->flush();
             }
-            
         }
-    
-        
+
+
+
         $referer = $request->headers->get('referer');
         return $this->redirect($referer);
     }
 
+    #[Route('/delete/detailcommande/{id}', name: 'app_detailcommande_delete')]
+    public function delete_detail_commande(DetailCommandeRepository $detailCommandeRepository, $id, EntityManagerInterface $em, Request $request): Response
+    {
+        Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
 
+        $detailcommande = $detailCommandeRepository->find($id);
+        if ($detailcommande->getEtat() === "Pending") {
+            $chargeid = $detailcommande->getCommande()->getPayment();
+            $charge = Charge::retrieve($chargeid);
+            $refund = Refund::create([
+                'charge' => $charge->id,
+                'amount' => $detailcommande->getPrixTotal()*100,
+            ]);
+            if ($refund->status === 'succeeded') {
+                // Refund was succefull
+                // no iterations
+                $detailcommande->getCommande()->setPrix(
+                    $detailcommande->getCommande()->getPrix() - $detailcommande->getPrixTotal()
+                );
+                $detailcommande->setEtat("Canceled");
+
+                $countPending = 0;
+                $countProgress = 0;
+                $countCompleted = 0;
+                $countCanceled = 0;
+                $totalcount = count($detailcommande->getCommande()->getDetailCommandes());
+                foreach ($detailcommande->getCommande()->getDetailCommandes() as $d) {
+                    if ($d->getEtat() === "Pending") {
+                        $countPending++;
+                    }
+                    if ($d->getEtat() === "Progress") {
+                        $countProgress++;
+                    }
+                    if ($d->getEtat() === "Completed" || $d->getEtat() === "Canceled") {
+                        $countCompleted++;;
+                    }
+                    if ($d->getEtat() === "Canceled") {
+                        $countCanceled++;;
+                    }
+                }
+
+                if ($countProgress === 0 && $countPending === 0) {
+
+                    if ($countCompleted !== 0 &&  $countCompleted === $totalcount && $countCanceled !== $totalcount) {
+
+                        $detailcommande->getCommande()->setEtat("Completed");
+                    } else {
+                        $detailcommande->getCommande()->setEtat("Canceled");
+                    }
+                }
+
+
+
+
+
+                $em->persist($detailcommande);
+                $em->flush();
+            }
+        }
+
+
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer);
+    }
 }
