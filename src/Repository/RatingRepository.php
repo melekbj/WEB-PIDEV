@@ -38,6 +38,16 @@ class RatingRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function getAverageStoreRating(int $storeId): float
+{
+    $queryBuilder = $this->createQueryBuilder('r')
+        ->select('AVG(r.rate)')
+        ->where('r.store = :storeId')
+        ->setParameter('storeId', $storeId);
+
+    return (float) $queryBuilder->getQuery()->getSingleScalarResult();
+}
+
 
 //    /**
 //     * @return Rating[] Returns an array of Rating objects

@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Form\StoreType;
 use App\Repository\StoreRepository;
+use App\Repository\RatingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Store;
 use Symfony\Component\HttpFoundation\Request; 
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class PartnerController extends AbstractController
 {
@@ -51,14 +53,16 @@ class PartnerController extends AbstractController
     }
      
     #[Route('/partner/show/{id?}', name: 'app_store_show_partner')]
-    public function show(?int $id, StoreRepository $storeRepository): Response
+    public function show(?int $id, StoreRepository $storeRepository, RatingRepository $ratingRepository): Response
     {
         if ($id === null) {
             return $this->redirectToRoute('app_store_new_partner');
         } else {
             $store = $storeRepository->find($id);
+            $rating = $ratingRepository->getAverageStoreRating($id);
             return $this->render('partner/store/show.html.twig', [
                 'store' => $store,
+                'rating' => $rating
             ]);
         }
     }
@@ -92,4 +96,25 @@ class PartnerController extends AbstractController
 
         return $this->redirectToRoute('app_partner');
     }
+
+
+
+
+#[Route('/store/{id}/rate', name:'app_store_rate_partner', methods:['POST'])]
+
+public function rateStore(Request $request, int $id): Response
+{
+    $rating = $request->request->getInt('rating');
+
+    // TODO: Add logic to save the rating to the database for the given store ID
+
+    $avgRating = 4.5; // TODO: Replace with actual average rating
+    $numRatings = 10; // TODO: Replace with actual number of ratings
+
+    return new JsonResponse([
+        'avg_rating' => $avgRating,
+        'num_ratings' => $numRatings,
+    ]);
+}
+
 }

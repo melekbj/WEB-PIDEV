@@ -24,7 +24,7 @@
                 <td>{{ store.location }}</td>
                 <td>
                     {% if store.photo is not empty %}
-                        <img src="{{ asset('img/' ~ store.photo) }}" alt="{{ store.nom }} photo">
+                        <img src="{{ asset('' ~ store.photo) }}" alt="{{ store.nom }} photo">
                     {% endif %}
                 </td>
                 <td>{{ store.categorie.libelle }}</td>

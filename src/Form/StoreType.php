@@ -101,9 +101,9 @@ class StoreType extends AbstractType
                 // Move the file to the directory where images are stored
                 try {
                     $imageFile->move(
-                        $this->params->get('kernel.project_dir').'\xampp\htdocs\img',
-                        $newFilename
-                    );
+                        $this->params->get('kernel.project_dir') . '/public',
+                        'img/'.$newFilename
+                    );                                 
                 } catch (FileException $e) {
                     // Handle the exception
                 }

@@ -17,36 +17,55 @@
     <h1>Store</h1>
 
     <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ store.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ store.nom }}</td>
-            </tr>
-            <tr>
-                <th>Location</th>
-                <td>{{ store.location }}</td>
-            </tr>
-             <tr>
-                <th>Photo</th>
-                <td>
-                    {% if store.photo is not empty %}
-                        <img src="{{ asset('img/' ~ store.photo) }}" alt="{{ store.nom }} photo">
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th>Categorie</th>
-                <td>{{ store.Categorie.libelle }}</td>
-            </tr>
-        </tbody>
+<tbody>
+    <tr>
+        <th>Id</th>
+        <td>{{ store.id }}</td>
+    </tr>
+    <tr>
+        <th>Nom</th>
+        <td>{{ store.nom }}</td>
+    </tr>
+    <tr>
+        <th>Location</th>
+        <td>{{ store.location }}</td>
+    </tr>
+    <tr>
+        <th>Photo</th>
+        <td>
+             {% if store.photo is not empty %}
+                    <img src="{{ asset('img/' ~ store.photo) }}" alt="{{ store.nom }} photo">
+             {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Categorie</th>
+        <td>{{ store.Categorie.libelle }}</td>
+    </tr>
+     <tr>
+        <th>RaIting</th>
+        <td>
+    {% if rating is not empty %}
+        
+                <div class="rating">
+                    {% for i in 1..5 %}
+                        {% if i <= rating %}
+                            <span class="fa fa-star checked"></span>
+                        {% else %}
+                            <span class="fa fa-star"></span>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="ratingnum badge bg-info align-middle ms-2">{{ rating }}</span>
+                </div>
+    {% endif %} 
+        </td>
+    </tr>
+</tbody>
+
     </table>
 
     <a href="{{ path('app_partner') }}">back to list</a>
 
     <a href="{{ path('app_store_edit_partner', {'id': store.id}) }}">edit</a>
+    {% endblock %}
 
-{% endblock %}
