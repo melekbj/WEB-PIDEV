@@ -307,10 +307,6 @@ class ClientController extends AbstractController
                 $session->set('carderror', $e->getMessage());
                 return $this->redirectToRoute('app_cart_payement');
             }
-
-
-
-
             // if payment is sucess to redirect
             return $this->redirectToRoute('app_historique');
         }
@@ -322,7 +318,9 @@ class ClientController extends AbstractController
             'command' => $command,
         ]);
     }
-    #[Route('/delete/commande/{id}', name: 'app_commande_delete')]
+
+    // not realy delete  and more like Cancel
+    #[Route('/cancel/commande/{id}', name: 'app_commande_delete')]
     public function delete_commande(CommandeRepository $commandeRepository, $id, EntityManagerInterface $em, Request $request): Response
     {
         Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
@@ -341,7 +339,12 @@ class ClientController extends AbstractController
                 $commande->setEtat("Canceled");
                 $details = $commande->getDetailCommandes();
                 foreach ($details as $detail) {
-                    $detail->setEtat("Canceled");
+                    if ($detail->getEtat()!=="Completed")
+                    {
+                        $detail->setEtat("Canceled");
+                        //adding the quantity back to the product
+                         $detail->getProduit()->setQuantite($detail->getProduit()->getQuantite()+$detail->getQuantite());
+                    }
                     # code...
                 }
                 $commande->setPrix('0');
@@ -355,28 +358,35 @@ class ClientController extends AbstractController
         $referer = $request->headers->get('referer');
         return $this->redirect($referer);
     }
-
-    #[Route('/delete/detailcommande/{id}', name: 'app_detailcommande_delete')]
+    // not realy Delete and more like Cancel
+    #[Route('/cancel/detailcommande/{id}', name: 'app_detailcommande_delete')]
     public function delete_detail_commande(DetailCommandeRepository $detailCommandeRepository, $id, EntityManagerInterface $em, Request $request): Response
     {
+        // stripe Key usage :: this the third 3rd line in this page
         Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
 
         $detailcommande = $detailCommandeRepository->find($id);
         if ($detailcommande->getEtat() === "Pending") {
             $chargeid = $detailcommande->getCommande()->getPayment();
+            // retrive the charge  from the ID
             $charge = Charge::retrieve($chargeid);
+            // create the Refund from the Charge
             $refund = Refund::create([
                 'charge' => $charge->id,
-                'amount' => $detailcommande->getPrixTotal()*100,
+                'amount' => $detailcommande->getPrixTotal() * 100,
             ]);
             if ($refund->status === 'succeeded') {
                 // Refund was succefull
-                // no iterations
+                // Reduce the Command Total Prix
                 $detailcommande->getCommande()->setPrix(
                     $detailcommande->getCommande()->getPrix() - $detailcommande->getPrixTotal()
                 );
                 $detailcommande->setEtat("Canceled");
+                 //adding the quantity back to the product
+                $detailcommande->getProduit()->setQuantite($detailcommande->getProduit()->getQuantite()+$detailcommande->getQuantite());
+               
 
+                // Recalculate the ETAT of the entire Commande from a specific detailCommande
                 $countPending = 0;
                 $countProgress = 0;
                 $countCompleted = 0;
@@ -396,7 +406,7 @@ class ClientController extends AbstractController
                         $countCanceled++;;
                     }
                 }
-
+                    // Setting the Commande Etat when needed 
                 if ($countProgress === 0 && $countPending === 0) {
 
                     if ($countCompleted !== 0 &&  $countCompleted === $totalcount && $countCanceled !== $totalcount) {
@@ -406,17 +416,14 @@ class ClientController extends AbstractController
                         $detailcommande->getCommande()->setEtat("Canceled");
                     }
                 }
-
-
-
-
-
+                // save the variable 
+                // we use only 1 variable as it tracks everything within it
                 $em->persist($detailcommande);
                 $em->flush();
             }
         }
 
-
+        // basicly it refresh the page with new informations
         $referer = $request->headers->get('referer');
         return $this->redirect($referer);
     }
