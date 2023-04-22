@@ -22,7 +22,10 @@ class PartnerController extends AbstractController
         $store = $storeRepository->findStoreByUserId($user->getId());
     
         if ($store !== null) {
-            return $this->redirectToRoute('app_store_show_partner', ['id' => $store->getId()]);
+            return $this->redirectToRoute('app_store_show_partner', [
+                'id' => $store->getId(),
+                'user' => $user
+            ]);
         } else {
             // Handle the case where the user doesn't have a store
             // For example, you could redirect them to the new store page
@@ -54,13 +57,13 @@ class PartnerController extends AbstractController
      
     #[Route('/partner/show/{id?}', name: 'app_store_show_partner')]
     public function show(?int $id, StoreRepository $storeRepository, RatingRepository $ratingRepository): Response
-    {
+    {//TODO: add the rating methode and test if it is first time create a new insert else do an edit   
         if ($id === null) {
             return $this->redirectToRoute('app_store_new_partner');
         } else {
             $store = $storeRepository->find($id);
             $rating = $ratingRepository->getAverageStoreRating($id);
-            return $this->render('partner/store/show.html.twig', [
+                     return $this->render('partner/store/show.html.twig', [
                 'store' => $store,
                 'rating' => $rating
             ]);
@@ -97,24 +100,5 @@ class PartnerController extends AbstractController
         return $this->redirectToRoute('app_partner');
     }
 
-
-
-
-#[Route('/store/{id}/rate', name:'app_store_rate_partner', methods:['POST'])]
-
-public function rateStore(Request $request, int $id): Response
-{
-    $rating = $request->request->getInt('rating');
-
-    // TODO: Add logic to save the rating to the database for the given store ID
-
-    $avgRating = 4.5; // TODO: Replace with actual average rating
-    $numRatings = 10; // TODO: Replace with actual number of ratings
-
-    return new JsonResponse([
-        'avg_rating' => $avgRating,
-        'num_ratings' => $numRatings,
-    ]);
-}
 
 }

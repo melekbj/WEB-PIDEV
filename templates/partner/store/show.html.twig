@@ -2,70 +2,99 @@
 
 {% block title %}Store{% endblock %}
 
-{% block body %}
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-    <h1>Store</h1>
-
-    <table class="table">
-<tbody>
-    <tr>
-        <th>Id</th>
-        <td>{{ store.id }}</td>
-    </tr>
-    <tr>
-        <th>Nom</th>
-        <td>{{ store.nom }}</td>
-    </tr>
-    <tr>
-        <th>Location</th>
-        <td>{{ store.location }}</td>
-    </tr>
-    <tr>
-        <th>Photo</th>
-        <td>
-             {% if store.photo is not empty %}
-                    <img src="{{ asset('img/' ~ store.photo) }}" alt="{{ store.nom }} photo">
-             {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <th>Categorie</th>
-        <td>{{ store.Categorie.libelle }}</td>
-    </tr>
-     <tr>
-        <th>RaIting</th>
-        <td>
-    {% if rating is not empty %}
+{% block head %}
+    <style>
+        .star-rating {
+            display: inline-block;
+            direction: rtl;
+        }
         
-                <div class="rating">
-                    {% for i in 1..5 %}
-                        {% if i <= rating %}
-                            <span class="fa fa-star checked"></span>
-                        {% else %}
-                            <span class="fa fa-star"></span>
-                        {% endif %}
-                    {% endfor %}
-                    <span class="ratingnum badge bg-info align-middle ms-2">{{ rating }}</span>
-                </div>
-    {% endif %} 
-        </td>
-    </tr>
-</tbody>
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+        
+        .star-rating label {
+            display: inline-block;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            margin: 0;
+            padding: 0;
+            background: url('/public/Assets/images/star.png') no-repeat center center;
+            background-size: contain;
+        }
+        
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            background-position: 0 0;
+        }
+        
+        .star-rating input[type="radio"]:checked ~ label {
+            background-position: 0 0;
+        }
+    </style>
+{% endblock %}
 
-    </table>
+{% block body %}
+<br><br><br><br><br><br><br><br><br><br><br>
+<h1>Store</h1>
 
-    <a href="{{ path('app_partner') }}">back to list</a>
-
-    <a href="{{ path('app_store_edit_partner', {'id': store.id}) }}">edit</a>
-    {% endblock %}
-
+<table class="table">
+    <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ store.id }}</td>
+        </tr>
+        <tr>
+            <th>Nom</th>
+            <td>{{ store.nom }}</td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>{{ store.location }}</td>
+        </tr>
+        {% if store.photo is not empty %}
+        <tr>
+            <th>Photo</th>
+            <td><img src="{{ asset('img/' ~ store.photo) }}" alt="{{ store.nom }} photo"></td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>Categorie</th>
+            <td>{{ store.Categorie.libelle }}</td>
+        </tr>
+        <tr>
+            <th>Rating</th>
+            <td>
+                {% if app.user.getRoles() == 'ROLE_CLIENT' %}
+                    <h2>Rate this store:</h2>
+                    {{ form_start(form) }}
+                    {{ form_widget(form.rate, { 'attr': {'class': 'star-rating'} }) }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    {{ form_end(form) }}
+                {% else %}
+                    {% if rating %}
+                        <div class="star-rating">
+                            {% set ratingValue = rating|round(1) %}
+                            {% set fullStars = ratingValue|round(0, 'ceil') %}
+                            {% set emptyStars = 5 - fullStars %}
+                            {% for i in 1..fullStars %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% if ratingValue > fullStars %}
+                                <i class="fas fa-star-half-alt"></i>
+                                {% set emptyStars = emptyStars - 1 %}
+                            {% endif %}
+                            {% for i in 1..emptyStars %}
+                                <i class="far fa-star"></i>
+                            {% endfor %}
+                            <span class="rating-value">{{ ratingValue }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<a href="{{ path('app_store_edit_partner', {'id': store.id}) }}">Edit</a>
+{% endblock %}
