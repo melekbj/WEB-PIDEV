@@ -20,6 +20,8 @@ use App\Entity\Store;
 use App\Form\StoreType;
 use App\Repository\StoreRepository;
 use Symfony\Component\Security\Core\Security;
+use App\Entity\Rating;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AdminController extends AbstractController
 {
@@ -115,13 +117,40 @@ class AdminController extends AbstractController
    
 
     
+    // #[Route('/store', name: 'app_store_index', methods: ['GET'])]
+    // public function liststore(StoreRepository $storeRepository, Security $security): Response
+    // {
+    //     $stores = $storeRepository->findAll();
+    
+    //     return $this->render('admin/store/index.html.twig', [
+    //         'stores' => $stores,
+    //     ]);
+    // }
+    
     #[Route('/store', name: 'app_store_index', methods: ['GET'])]
-    public function liststore(StoreRepository $storeRepository, Security $security): Response
+    public function liststore(StoreRepository $storeRepository, EntityManagerInterface $entityManager): Response
     {
         $stores = $storeRepository->findAll();
+        $averageRatings = [];
+            
+        foreach ($stores as $store) {
+            $ratings = $entityManager->getRepository(Rating::class)->findBy(['store' => $store]);
+            $ratingValue = 0;
+            $count = count($ratings);
+            if ($count > 0) {
+                foreach ($ratings as $rating) {
+                    $ratingValue += $rating->getRate();
+                }
+                $averageRating = $ratingValue / $count;
+            } else {
+                $averageRating = 0;
+            }
+            $averageRatings[$store->getId()] = $averageRating;
+        }
     
         return $this->render('admin/store/index.html.twig', [
             'stores' => $stores,
+            'averageRatings' => $averageRatings,
         ]);
     }
     

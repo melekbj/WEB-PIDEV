@@ -101,8 +101,8 @@ class StoreType extends AbstractType
                 // Move the file to the directory where images are stored
                 try {
                     $imageFile->move(
-                        $this->params->get('kernel.project_dir') . '/public',
-                        'img/'.$newFilename
+                        $this->params->get('kernel.project_dir') . '/public/uploads',
+                        $newFilename
                     );                                 
                 } catch (FileException $e) {
                     // Handle the exception
@@ -116,8 +116,7 @@ class StoreType extends AbstractType
             $location = $ville . ', ' . $adresse;
             $store->setLocation($location);
         });
-        
-    }
+    }        
 
     public function configureOptions(OptionsResolver $resolver): void
     {

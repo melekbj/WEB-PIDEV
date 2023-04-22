@@ -13,6 +13,7 @@
                 <th>Location</th>
                 <th>Photo</th>
                 <th>Categorie</th>
+                <th>Rating</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -28,6 +29,27 @@
                     {% endif %}
                 </td>
                 <td>{{ store.categorie.libelle }}</td>
+                <td>
+                    {% set rating = averageRatings[store.id] %}
+                    {% if rating %}
+                        <div class="star-rating">
+                            {% set ratingValue = rating|round(1) %}
+                            {% set fullStars = ratingValue|round(0, 'ceil') %}
+                            {% set emptyStars = 5 - fullStars %}
+                            {% for i in 1..fullStars %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% if ratingValue > fullStars %}
+                                <i class="fas fa-star-half-alt"></i>
+                                {% set emptyStars = emptyStars - 1 %}
+                            {% endif %}
+                            {% for i in 1..emptyStars %}
+                                <i class="far fa-star"></i>
+                            {% endfor %}
+                            <span class="rating-value">{{ ratingValue }}/5</span>
+                        </div>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="{{ path('app_store_show', {'id': store.id}) }}">show</a>
                 </td>
