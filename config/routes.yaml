@@ -1,3 +1,6 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+produit_pdf:
+    path: /produit/{id}/pdf
+    controller: App\Controller\ProduitController::pdf

@@ -2,6 +2,19 @@
 
 {% block title %}Produit{% endblock %}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 {% block body %}
     <h1>Produit</h1>
 
@@ -39,4 +52,7 @@
     <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
 
     {{ include('produit/_delete_form.html.twig') }}
+
+      
+   <a href="{{ categorie_path }}">Voir la catégorie</a>
 {% endblock %}
