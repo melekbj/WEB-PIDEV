@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseAdmin.html.twig' %}
 
 {% block title %}Edit EventType{% endblock %}
 
@@ -9,8 +9,14 @@
 
     <a href="{{ path('app_event_type_index') }}">back to list</a>
 
-    {{ include('event_type/_delete_form.html.twig') }}
+    {# {{ include('event_type/_delete_form.html.twig') }} #}
 
+<form method='POST' action="{{ path('app_event_delete_page', {'id': id}) }}">
+<input name="id" value=" {{id}} " hidden>
+<button action="Submit"> Supprimer</button>
+
+
+</form>
 
 
 {% endblock %}

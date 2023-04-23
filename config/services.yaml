@@ -6,6 +6,43 @@
 parameters:
 
 services:
+    # ...
+    Endroid\QrCode\QrCode:
+        alias: endroid.qrcode
+       
+    endroid.qrcode:
+        public: true
+        synthetic: true
+
+    Endroid\QrCode\QrCodeFactory:
+        class: Endroid\QrCode\Factory\QrCodeFactory
+        arguments:
+            - '@endroid.qrcode.writer'
+            - '@endroid.qrcode.generator'
+            - '@endroid.qrcode.error_correction_level'
+            - '@endroid.qrcode.mask_pattern'
+            - '@endroid.qrcode.encoding'
+
+    endroid.qrcode.writer:
+        class: Endroid\QrCode\Writer\BinaryWriter
+        public: false
+
+    endroid.qrcode.generator:
+        class: Endroid\QrCode\Generator\Generator
+        public: false
+
+    endroid.qrcode.error_correction_level:
+        class: Endroid\QrCode\QrCode\ErrorCorrectionLevel
+        public: false
+
+    endroid.qrcode.mask_pattern:
+        class: Endroid\QrCode\QrCode\MaskPattern
+        public: false
+
+    endroid.qrcode.encoding:
+        class: Endroid\QrCode\QrCode\Encoding
+        public: false
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

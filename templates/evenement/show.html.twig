@@ -1,8 +1,14 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Evenement{% endblock %}
 
 {% block body %}
+<br></br>
+<br></br>
+<br></br>
+
+<br></br>
+<br></br>
+
     <h1>Evenement</h1>
 
     <table class="table">
@@ -42,7 +48,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_evenement_index') }}">back to list</a>
+    <a href="{{ path('app_events_index') }}">back to list</a>
 
     <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}">edit</a>
 

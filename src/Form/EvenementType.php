@@ -23,6 +23,9 @@ use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
 
 class EvenementType extends AbstractType
 {
@@ -37,12 +40,26 @@ class EvenementType extends AbstractType
                     'propertyPath' => 'parent.all[date_fin].data',
                     'message' => 'The start date must be before the end date.',
                 ]),
+                new Callback(function ($data, ExecutionContextInterface $context) {
+                    if ($data && $data->format('Y') !== '2023') {
+                        $context->buildViolation('The start date must start with the year 2023.')
+                            ->atPath('date_debut')
+                            ->addViolation();
+                    }
+                }),
             ],
         ])
         ->add('date_fin', DateType::class, [
             'constraints' => [
                 new NotBlank(),
                 new Type(\DateTime::class),
+                new Callback(function ($data, ExecutionContextInterface $context) {
+                    if ($data && $data->format('Y') !== '2023') {
+                        $context->buildViolation('The end date must start with the year 2023.')
+                            ->atPath('date_fin')
+                            ->addViolation();
+                    }
+                }),
             ],
         ])
             ->add('imageEv',FileType::class, [

@@ -1,8 +1,14 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseAdmin.html.twig' %}
 
 {% block title %}Evenement index{% endblock %}
 
 {% block body %}
+<br></br>
+<br></br>
+<br></br>
+<br></br>
+
+
     <h1>Evenement index</h1>
 
     <table class="table">
@@ -33,6 +39,7 @@
                 <td>
                     <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}">show</a>
                     <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}">edit</a>
+                     <a href="{{ path('app_evenement_pdf', {'id': evenement.id}) }}">pdf</a>
                 </td>
             </tr>
         {% else %}

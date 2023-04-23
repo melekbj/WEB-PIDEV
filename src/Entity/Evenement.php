@@ -7,11 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
-#[UniqueEntity(fields: ['titreEv'], message:'this title already exists')]
-
 class Evenement
 {
     #[ORM\Id]
@@ -31,7 +28,7 @@ class Evenement
     #[ORM\Column(length: 100)]
     private ?string $lieuEv = null;
 
-    #[ORM\Column(length: 100, unique:true)]
+    #[ORM\Column(length: 100)]
     private ?string $titreEv = null;
 
     #[ORM\Column(length: 255)]
@@ -49,6 +46,7 @@ class Evenement
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -181,4 +179,8 @@ class Evenement
 
         return $this;
     }
+
+    
+
+  
 }

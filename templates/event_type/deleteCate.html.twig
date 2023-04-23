@@ -1,0 +1,63 @@
+{% extends 'baseAdmin.html.twig' %}
+{% block body %}
+
+
+<h1>{{id}}</h1>
+<table border="5">
+<th>Modification</th>
+<th>Cascade</th>
+<th>Annuler</th>
+<tr>
+<td>
+<form method='get' action="{{ path('app_event_delete_page', {'id': id}) }}">
+    <h4>Modifier</h4>
+
+<input name="id" value="{{id}}" hidden>
+<input name="response" value="Modifier" hidden>
+
+<select name='newlibelleid'>
+        {% for eventype in list %}
+        <option value="{{eventype.id}}" > {{eventype.libelle}} </option>
+        {% endfor %}
+</select>
+
+
+</td>
+<td>
+<button action="Submit"> Modifier</button>
+</td>
+</form>
+</tr>
+<tr>
+<td>
+<form method='get' action="{{ path('app_event_delete_page', {'id': id}) }}">
+    <h4>Cascade</h4>
+<input name="id" value=" {{id}} " hidden>
+<input name="response" value="Cascade" hidden>
+</td>
+<td>
+<button action="Submit"> Supprimer</button>
+</td>
+</form>
+</tr>
+<tr>
+<td>
+
+<form method='get' action="{{ path('app_event_delete_page', {'id': id}) }}">
+    
+<input name="id" value="{{id}}" hidden>
+<input name="response" value="Annuler" hidden>
+
+</td>
+<td>
+<button action="Submit"> Annuler</button>
+</td>
+</form>
+</td>
+<td></td>
+</tr>
+</table>
+
+
+
+{% endblock %}
