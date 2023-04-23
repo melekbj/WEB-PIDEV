@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Produit;
+use App\Entity\Categorie;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -68,9 +69,12 @@ class ProduitType extends AbstractType
                     ],
                 ])
             ->add('etat')
-            ->add('categorie',EntityType::class,
+            /*->add('categorie',EntityType::class,
             ['class'=>Produit::class,
-            'choice_label'=>'nom']);
+            'choice_label'=>'nom']);*/
+            ->add('categorie',EntityType::class,
+        ['class'=>Categorie::class,
+        'choice_label'=>'nom']);
             /*->add('type',EntityType::class
                , [
                  'class' => EventType::class,

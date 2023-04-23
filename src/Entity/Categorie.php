@@ -11,7 +11,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
 #[UniqueEntity(fields: ['nom'], message:'this nom already exists')]
 
-
 class Categorie
 {
     #[ORM\Id]
@@ -91,8 +90,4 @@ class Categorie
 
         return $this;
     }
-    public function __toString()
-{
-    return $this->nom;
-}
 }

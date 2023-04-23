@@ -9,9 +9,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+// use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -52,16 +53,51 @@ class RegisterType extends AbstractType
                     'Autre' => 'Autre',
                 ],
             ])
+            ->add('ville', ChoiceType::class, [
+                'required' => true,
+                'multiple' => false,
+                'expanded' => false,
+                'placeholder' => 'Choose state',
+                'choices'  => [
+                    'Ariana' => 'Ariana',
+                    'Beja' => 'Beja',
+                    'Ben Arous' => 'Ben Arous',
+                    'Bizerte' => 'Bizerte',
+                    'Gabes' => 'Gabes',
+                    'Gafsa' => 'Gafsa',
+                    'Jendouba' => 'Jendouba',
+                    'Kairouan' => 'Kairouan',
+                    'Kasserine' => 'Kasserine',
+                    'Kebili' => 'Kebili',
+                    'Kef' => 'Kef',
+                    'Mahdia' => 'Mahdia',
+                    'Manouba' => 'Manouba',
+                    'Medenine' => 'Medenine',
+                    'Monastir' => 'Monastir',
+                    'Nabeul' => 'Nabeul',
+                    'Sfax' => 'Sfax',
+                    'Sidi Bouzid' => 'Sidi Bouzid',
+                    'Siliana' => 'Siliana',
+                    'Sousse' => 'Sousse',
+                    'Tataouine' => 'Tataouine',
+                    'Tozeur' => 'Tozeur',
+                    'Tunis' => 'Tunis',
+                    'Zaghouan' => 'Zaghouan',
+                ],
+            ])
             ->add('adresse')
             ->add('image', FileType::class, [
-                'required' => false,
+                'required' => true,
                 'label' => 'Profile Picture',
+                
             ])
+            
             ->add('phone', TelType::class, [
                 'attr' => [
-                    'pattern' => '^\+?\d+$'
+                    'pattern' => '^\+?\d*$',
+                    'placeholder' => '(+XXX)XXXXXXXXX'
                 ]
-            ])
+            ])                       
             ->add('email', EmailType::class)
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -69,6 +105,13 @@ class RegisterType extends AbstractType
                 'required' => true,
                 'first_options'  => ['label' => 'Password'],
                 'second_options' => ['label' => 'Confirm Password'],
+                'constraints' => [
+                    new Length([
+                        'min' => 8,
+                        'minMessage' => 'The password must be at least {{ limit }} characters long.',
+                        // add other options for the constraint if needed
+                    ]),
+                ],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Register',
@@ -77,26 +120,26 @@ class RegisterType extends AbstractType
                 ]
             ]);
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            $user = $event->getData();
-            $imageFile = $user->getImage();
+        // $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+        //     $user = $event->getData();
+        //     $imageFile = $user->getImageFile();
 
-            if ($imageFile instanceof UploadedFile) {
-                $newFilename = uniqid().'.'.$imageFile->guessExtension();
+        //     if ($imageFile instanceof UploadedFile) {
+        //         $newFilename = uniqid().'.'.$imageFile->guessExtension();
 
-                // Move the file to the directory where images are stored
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // Handle the exception
-                }
+        //         // Move the file to the directory where images are stored
+        //         try {
+        //             $imageFile->move(
+        //                 $this->getParameter('images_directory'),
+        //                 $newFilename
+        //             );
+        //         } catch (FileException $e) {
+        //             // Handle the exception
+        //         }
 
-                $user->setImage($newFilename);
-            }
-        });
+        //         $user->setImageFile($newFilename);
+        //     }
+        // });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
