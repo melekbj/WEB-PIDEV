@@ -33,6 +33,10 @@ class PaymentType extends AbstractType
                 ]),
             ],
             'required' => true,
+            'attr' => [
+                'class' => 'form-control',
+                'placeholder' => 'Enter card number',
+            ]
         ])
         ->add('expirationMonth', TextType::class, [
             'label' => 'Expiration Month',
@@ -43,6 +47,10 @@ class PaymentType extends AbstractType
                 ]),
             ],
             'required' => true,
+            'attr' => [
+                'class' => 'form-control',
+                'placeholder' => 'Enter expiration month',
+            ]
         ])
         ->add('expirationYear', TextType::class, [
             'label' => 'Expiration Year',
@@ -53,6 +61,10 @@ class PaymentType extends AbstractType
                 ])
             ],
             'required' => true,
+            'attr' => [
+                'class' => 'form-control',
+                'placeholder' => 'Enter expiration year',
+            ]
         ])
         ->add('cvc', TextType::class, [
             'label' => 'Secret Code',
@@ -65,6 +77,10 @@ class PaymentType extends AbstractType
                 ]),
             ],
             'required' => true,
+            'attr' => [
+                'class' => 'form-control',
+                'placeholder' => 'Enter secret code',
+            ]
         ])
         ->add('submit', SubmitType::class, [
             'label' => 'Submit',

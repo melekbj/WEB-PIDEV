@@ -40,13 +40,11 @@
 	<th>
 		Etat
 	</th>
+	
 	<th>
-		button
+		Destination
 	</th>
-	<th>
-		details
-	</th>
-	<th>Destination</th>
+	
 	<th>Action</th>
 	{# Affichage historique Commande par Commande complete #}
 	{% for completeCommande in historiquecommande %}
@@ -61,21 +59,18 @@
 				{{ completeCommande.etat }}
 
 			</td>
-			<td>
-				<form>
-					<input name="commandedetail" value="{{ completeCommande.id }}" hidden>
-					<input type="submit" value="commande detail">
-				</form>
-			</td>
+			
 
 
 			<td>
 								{{ completeCommande.destination }}
 
 			</td>
-			<td>
-			</td>
-			<td>
+			
+			<td><form>
+					<input name="commandedetail" value="{{ completeCommande.id }}" hidden>
+					<input type="submit" value="commande detail">
+				</form><br>
 			{% if completeCommande.etat == "Pending" %}
 				
 <a href="{{ path('app_commande_delete', {'id': completeCommande.id}) }}" onclick="return confirm('Are you sure you want to cancel this order?')">Cancel</a>
@@ -86,7 +81,7 @@
 	</td>
 </tr>{% endfor %}</table>
     	{% if testinput is not null %}
-	
+
 {% set total=0 %} 
 				{% for detail in selecteddetails %}
 				    	{% if detail.etat != "Canceled" %}
@@ -107,12 +102,19 @@
 								<h4 class="product-price">
 									<span class="qty"> {{detail.quantite}} x</span>
 									{{detail.produit.prix}}</h4>
+									<h5>Etat {{detail.etat}} </h5>
+										{% if detail.etat == "Pending" %}
+					<div>
+<a href="{{ path('app_detailcommande_delete', {'id': detail.id}) }}" onclick="return confirm('Are you sure you want to cancel this order?')">Cancel</a>
+
+					</div>
+					{% endif %}
 										<div class="cart-summary">
 					
 					{% if detail.etat != "Canceled" %}
 					<h5> ____Sub = {{detail.prixtotal}} </h5>
 					{% else %}
-					<p> ____Sub = {{detail.prixtotal}} </p>					
+<p style="text-decoration: line-through;"> ____Sub = {{detail.prixtotal}} </p>
 						{% endif %}
 				
 				</div>
@@ -123,12 +125,7 @@
 						
 						</div>
 					</div>
-						{% if detail.etat != "Canceled" %}
-					<div>
-<a href="{{ path('app_detailcommande_delete', {'id': detail.id}) }}" onclick="return confirm('Are you sure you want to cancel this order?')">Cancel</a>
-
-					</div>
-					{% endif %}
+					
 
 
 				{% endfor %}

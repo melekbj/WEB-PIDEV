@@ -331,7 +331,7 @@ class ClientController extends AbstractController
             $charge = Charge::retrieve($chargeid);
             $refund = Refund::create([
                 'charge' => $charge->id,
-                'amount' => $commande->getPrix(),
+                'amount' => $commande->getPrix() * 100,
             ]);
 
             if ($refund->status === 'succeeded') {
