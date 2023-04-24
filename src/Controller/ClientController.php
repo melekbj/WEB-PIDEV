@@ -67,17 +67,6 @@ class ClientController extends AbstractController
             ]);
         }
     }
-    #[Route('/client/publish', name: 'publish')]
-    public function publish(HubInterface $hub): Response
-    {
-        $update = new Update(
-            'https://example.com/books/1',
-            json_encode(['status' => 'Rate Submitted'])
-        );
 
-        $hub->publish($update);
-
-        return new Response('published!');
-    }
     
 }

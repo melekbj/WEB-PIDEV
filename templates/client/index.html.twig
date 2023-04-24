@@ -3,11 +3,24 @@
 {% block title %}Hello ClientController!{% endblock %}
 
 {% block body %}
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
     {% if app.user %}
             <div class="mb-3">
                 You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
             </div>
+
+    <a href="{{ path('app_store_show_client')}}">Create New</a>
+
+
+
         {% endif %}
 
 
