@@ -33,13 +33,9 @@ class ReclamationController extends AbstractController
                 return $this->redirectToRoute('app_reclamation');
         }
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $reclamation->setDescription($form->get('description')->getData());
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute('app_reclamation');
-            }
-    
+            
+            $reclamation->setDescription($form->get('description')->getData());
+     
             $image = $form->get('image')->getData();
 
             if ($image) {

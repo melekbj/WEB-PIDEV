@@ -5,7 +5,8 @@ namespace App\Entity;
 use App\Repository\ReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
 {
@@ -21,6 +22,10 @@ class Reclamation
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Regex(
+        pattern: '/\b\w+\b\s+\b\w+\b\s+\b\w+\b/',
+        message: 'Description must contain at least 3 words.'
+    )]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
@@ -78,14 +83,6 @@ class Reclamation
 
     public function setDescription(string $description): self
     {
-        
-    $words = explode(' ', trim($description));
-
-    if (count($words) <= 2) {
-        $this->description = $description;
-
-        throw new \Exception('Description must contain at least 3 words.');
-    }
 
     $this->description = $description;
 
