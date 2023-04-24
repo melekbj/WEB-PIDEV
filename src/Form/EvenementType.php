@@ -25,6 +25,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 
 class EvenementType extends AbstractType
@@ -62,10 +63,15 @@ class EvenementType extends AbstractType
                 }),
             ],
         ])
-            ->add('imageEv',FileType::class, [
-                'data_class' => null,
+            // ->add('imageEv',FileType::class, [
+            //     'data_class' => null,
+            //     'required' => true,
+            //     'label' => 'Profile Picture',])
+            ->add('imageFile', VichFileType::class, [
                 'required' => true,
-                'label' => 'Profile Picture',])
+                'allow_delete' => true,
+                'download_uri' => true,
+            ])
                 
             ->add('lieuEv' )
             ->add('titreEv')

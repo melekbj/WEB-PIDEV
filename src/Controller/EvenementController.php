@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Evenement;
+use App\Entity\Reservation;
+use App\Form\ReservationType;
 use App\Repository\EvenementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,10 +25,8 @@ use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Label\Font\NotoSans;
-
-
-
-
+use MercurySeries\FlashyBundle\FlashyNotifier;
+use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
 
 
 
@@ -45,7 +45,7 @@ class EvenementController extends AbstractController
     }
 
     #[Route('/new', name: 'app_evenement_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EvenementRepository $evenementRepository): Response
+    public function new(Request $request, EvenementRepository $evenementRepository,FlashyNotifier $flashy): Response
     {
         $evenement = new Evenement();
         $form = $this->createForm(EvenementType::class, $evenement);
@@ -53,8 +53,9 @@ class EvenementController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $evenementRepository->save($evenement, true);
-
-            return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+            $flashy->success('Evenement successfully created', 5000);
+            return $this->redirectToRoute('app_events_index', [], Response::HTTP_SEE_OTHER);
+            
         }
 
         return $this->renderForm('evenement/new.html.twig', [
@@ -96,21 +97,39 @@ class EvenementController extends AbstractController
             $evenementRepository->remove($evenement, true);
         }
 
-        return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_events_index', [], Response::HTTP_SEE_OTHER);
     }
 
 
-    #[Route('/detailEvent/{id}', name: 'app_evenement_index', methods: ["GET", "POST"] )]
-    public function showev($id, EvenementRepository $rep, Request $request): Response
-    {
-        //Utiliser find by id
-        $evenement = $rep->find($id);
-        return $this->render('evenement/index.html.twig', [
-            
-            'evenement' => $evenement,
-        ]);
+    #[Route('/detailEvent/{id}', name: 'app_event_detail', methods: ["GET", "POST"] )]
+    public function showev($id, EvenementRepository $rep, Request $request, PersistenceManagerRegistry $doctrine): Response
+{
+    $evenement = $rep->find($id);
+    $event = new Reservation();
+    $event->setEvent($evenement);
+    $form = $this->createForm(ReservationType::class, $event);
+    $form->handleRequest($request);
 
-        }
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager = $doctrine->getManager();
+        $nbPlacesReserved = $event->getNbPlaces();
+
+        // Decrement the nbMax field by the number of places reserved
+        $evenement->setNbMax($evenement->getNbMax() - $nbPlacesReserved);
+
+        $entityManager->persist($event);
+        $entityManager->persist($evenement); // persist the changes to the Evenement entity
+        $entityManager->flush();
+        $this->addFlash('success', 'Reservation ajouté avec succès');
+        return $this->redirectToRoute('app_home');
+    }
+
+    return $this->render('evenement/show.html.twig', [
+        'evenement' => $evenement,
+        'form' => $form->createView(),
+    ]);
+}
+
 
        
 
@@ -281,6 +300,7 @@ $dompdf = new Dompdf($options);
         
     
 }
+
 }
 
 

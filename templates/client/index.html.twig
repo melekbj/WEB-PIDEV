@@ -3,12 +3,76 @@
 {% block title %}Hello ClientController!{% endblock %}
 
 {% block body %}
-
+<br><br><br><br><br><br><br><br><br><br><br><br>
     {% if app.user %}
             <div class="mb-3">
                 You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
             </div>
         {% endif %}
+
+        {% for message in app.flashes('success') %}
+																<div class="alert alert-success">
+																	{{ message }}
+																</div>
+															{% endfor %}
+															{% for message in app.flashes('error') %}
+																<div class="alert alert-danger">
+																	{{ message }}
+																</div>
+															{% endfor %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>date</th>
+                <th>nom user</th>
+                <th>nbPlaces</th>
+                {# <th>LieuEv</th>
+                <th>TitreEv</th>
+                <th>DescEv</th>
+                <th>NbMax</th> #}
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for evenement in users %}
+            <tr>
+                <td>{{ evenement.id }}</td>
+                {# <td>{{ evenement.dateDebut ? evenement.dateDebut|date('Y-m-d') : '' }}</td> #}
+                {# <td>{{ evenement.dateFin ? evenement.dateFin|date('Y-m-d') : '' }}</td> #}
+                {# {% if evenement.imageEv %}
+                            {% set imageUrl = vich_uploader_asset(evenement, 'imageFile') %}
+                            <td><img style="width:50px;" src="{{ asset(imageUrl) }}" alt="img" /></td>
+                            {% endif %} #}
+                <td>{{ evenement.date | date('Y-m-d') }}</td>
+                <td>{{ evenement.user.nom }}</td>
+                <td>{{ evenement.nbPlaces }}</td>
+                {# <td>{{ evenement.nbMax }}</td> #}
+                <td>
+                    {# <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}">show</a>
+                    <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}">edit</a>
+                     <a href="{{ path('app_evenement_pdf', {'id': evenement.id}) }}">pdf</a> #}
+                     <form action="{{path('app_edit',{'id':evenement.id})}}">
+							<button >
+								edit
+							</button>
+						</form>
+
+                        <form action="{{path('app_deleteReservation',{'id':evenement.id})}}">
+							<button >
+								delete
+							</button>
+						</form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 
 

@@ -31,7 +31,10 @@
                 <td>{{ evenement.id }}</td>
                 <td>{{ evenement.dateDebut ? evenement.dateDebut|date('Y-m-d') : '' }}</td>
                 <td>{{ evenement.dateFin ? evenement.dateFin|date('Y-m-d') : '' }}</td>
-                <td>{{ evenement.imageEv }}</td>
+                {% if evenement.imageEv %}
+                            {% set imageUrl = vich_uploader_asset(evenement, 'imageFile') %}
+                            <td><img style="width:50px;" src="{{ asset(imageUrl) }}" alt="img" /></td>
+                            {% endif %}
                 <td>{{ evenement.lieuEv }}</td>
                 <td>{{ evenement.titreEv }}</td>
                 <td>{{ evenement.DescEv }}</td>
