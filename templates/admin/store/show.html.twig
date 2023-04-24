@@ -23,7 +23,7 @@
                 <th>Photo</th>
                 <td>
                     {% if store.photo is not empty %}
-                        <img src="{{ asset('' ~ store.photo) }}" alt="{{ store.nom }} photo">
+                        <img width="100px" src="{{ asset('/Assets/images/' ~ store.photo) }}" alt="{{ store.nom }} photo">
                     {% endif %}
                 </td>
             </tr>

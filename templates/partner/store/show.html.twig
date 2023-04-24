@@ -2,40 +2,8 @@
 
 {% block title %}Store{% endblock %}
 
-{% block head %}
-    <style>
-        .star-rating {
-            display: inline-block;
-            direction: rtl;
-        }
-        
-        .star-rating input[type="radio"] {
-            display: none;
-        }
-        
-        .star-rating label {
-            display: inline-block;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            margin: 0;
-            padding: 0;
-            background: url('/public/Assets/images/star.png') no-repeat center center;
-            background-size: contain;
-        }
-        
-        .star-rating label:hover,
-        .star-rating label:hover ~ label {
-            background-position: 0 0;
-        }
-        
-        .star-rating input[type="radio"]:checked ~ label {
-            background-position: 0 0;
-        }
-    </style>
-{% endblock %}
-
 {% block body %}
+
 <br><br><br><br><br><br><br><br><br><br><br>
 <h1>Store</h1>
 
@@ -68,8 +36,24 @@
             <td>
                 {% if app.user.getRoles() == 'ROLE_CLIENT' %}
                     <h2>Rate this store:</h2>
-                    {{ form_start(form) }}
+                   {{ form_start(form) }}
                     {{ form_widget(form.rate, { 'attr': {'class': 'star-rating'} }) }}
+                    <div class="star-rating">
+                            {% set ratingValue = rating|round(1) %}
+                            {% set fullStars = ratingValue|round(0, 'ceil') %}
+                            {% set emptyStars = 5 - fullStars %}
+                            {% for i in 1..fullStars %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% if ratingValue > fullStars %}
+                                <i class="fas fa-star-half-alt"></i>
+                                {% set emptyStars = emptyStars - 1 %}
+                            {% endif %}
+                            {% for i in 1..emptyStars %}
+                                <i class="far fa-star"></i>
+                            {% endfor %}
+                            <span class="rating-value">{{ ratingValue }}</span>
+                        </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                     {{ form_end(form) }}
                 {% else %}
@@ -102,3 +86,4 @@
 
 
 {% endblock %}
+

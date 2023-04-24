@@ -48,6 +48,25 @@ class StoreRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+
+    public function findLocalisationOrNom($location,$nom): array
+    {
+            $qb = $this->createQueryBuilder('s');
+
+        if (!empty($location)) {
+            $ville = explode(',', $location)[0];
+            $qb->andWhere('s.location LIKE :ville')
+                ->setParameter('ville', $ville . '%');
+        }
+
+        if (!empty($nom)) {
+            $qb->andWhere('s.nom LIKE :nom')
+               ->setParameter('nom', '%' . $nom . '%');
+        }
+     
+        return $qb->getQuery()
+        ->getResult();
+    }
     /**
      * @return Store[] Returns an array of Store objects
      */

@@ -48,6 +48,13 @@ class RatingRepository extends ServiceEntityRepository
     return (float) $queryBuilder->getQuery()->getSingleScalarResult();
 }
 
+public function findRatingByStoreAndUser(int $storeId, int $userId): ?Rating
+{
+    return $this->findOneBy([
+        'store' => $storeId,
+        'user' => $userId,
+    ]);
+}
 
 //    /**
 //     * @return Rating[] Returns an array of Rating objects

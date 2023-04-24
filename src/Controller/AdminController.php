@@ -128,9 +128,13 @@ class AdminController extends AbstractController
     // }
     
     #[Route('/store', name: 'app_store_index', methods: ['GET'])]
-    public function liststore(StoreRepository $storeRepository, EntityManagerInterface $entityManager): Response
+    public function liststore(StoreRepository $storeRepository, EntityManagerInterface $entityManager,Request $request): Response
     {
-        $stores = $storeRepository->findAll();
+        $location=$request->get('localtion');
+        $nom=$request->get('nom');
+
+
+        $stores = $storeRepository->findLocalisationOrNom($location,$nom);
         $averageRatings = [];
             
         foreach ($stores as $store) {
