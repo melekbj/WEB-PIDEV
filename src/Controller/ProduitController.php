@@ -15,12 +15,7 @@ use MercurySeries\FlashyBundle\FlashyNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-
-
-
-
-
+use Twilio\Rest\Client;
 use Twig\Environment;
 use Dompdf\Dompdf;
 
@@ -28,7 +23,10 @@ use Dompdf\Dompdf;
 
 #[Route('/produit')]
 class ProduitController extends AbstractController
-{
+{        
+    
+
+
     #[Route('/', name: 'app_produit_index', methods: ['GET'])]
     public function index(ProduitRepository $produitRepository): Response
     {
@@ -39,16 +37,31 @@ class ProduitController extends AbstractController
     }
 
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ProduitRepository $produitRepository, FlashyNotifier $flashy): Response
-    { 
+    public function new(Client $client,Request $request, ProduitRepository $produitRepository, FlashyNotifier $flashy): Response
+    {     
+
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('photo')->getData();
+        $newFilename = uniqid().'.'.$imageFile->getClientOriginalExtension();
+                 $uploadDir = $this->getParameter('kernel.project_dir') . '/public/productuploads';
+
+            $imageFile->move($uploadDir,$newFilename);
+            $produit->setPhoto($newFilename);
+
             $produitRepository->save($produit, true);
             $flashy->success('Article successfully created', 5000);
-            
+            $nom=$produit->getNom();
+            /*$message = $client->messages->create(
+                "+21621184125",
+                [
+                    'from' => '+16812025444',
+                    'body' => "A new product is available in our shop product name : ".$nom,
+                ]
+            );*/
            /* $this->addFlash('success', 'Produit successfully created');*/
 
             
@@ -65,6 +78,51 @@ class ProduitController extends AbstractController
           
         ]);
     }
+    #[Route('/affichage', name: 'app_produit_affichage', methods: ['GET'])]
+    public function indexFront(EntityManagerInterface $entityManager): Response
+    {
+        $categorie=$entityManager->getRepository(Categorie::class)->findAll();
+        $produits = $entityManager
+            ->getRepository(Produit::class)
+            ->findAll();
+
+        return $this->render('produit/affichage.html.twig', [
+            'categorie' => $categorie,
+            'produits' => $produits,
+        ]);
+    }
+    #[Route('/produit/{id?}/pdf', name: 'produit_pdf')]
+    public function pdf(Produit $produit): Response
+    {
+        $options = new OptionsResolver();
+        $options->setDefaults([
+            'defaultFont' => 'Arial',
+            'fontSize' => 12,
+        ]);
+        
+
+        $dompdf = new Dompdf($options);
+
+        $html = $this->renderView('pdf/index.html.twig', [
+            'produit' => $produit,
+        ]);
+
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'portrait');
+
+        $dompdf->render();
+
+        return new Response(
+            $dompdf->output(),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+            ]
+        );
+    }
+
+
 
     #[Route('/{id}', name: 'app_produit_show', methods: ['GET'])]
     public function show(Produit $produit): Response
@@ -126,50 +184,7 @@ class ProduitController extends AbstractController
             'produits' => $produitRepository->findAll(),
         ]);
     }*/
-
-
-    #[Route('/affichage', name: 'app_produit_affichage', methods: ['GET'])]
-    public function indexFront(EntityManagerInterface $entityManager): Response
-    {
-        $categorie=$entityManager->getRepository(Categorie::class)->findAll();
-        $produit = $entityManager
-            ->getRepository(Produit::class)
-            ->findAll();
-
-        return $this->render('produit/affichage.html.twig', [
-            'categorie' => $categorie,
-            'produit' => $produit,
-        ]);
-    }
-    #[Route('/produit/{id?}/pdf', name: 'produit_pdf')]
-        public function pdf(Produit $produit): Response
-        {
-            $options = new OptionsResolver();
-            $options->setDefaults([
-                'defaultFont' => 'Arial',
-                'fontSize' => 12,
-            ]);
-            
-    
-            $dompdf = new Dompdf($options);
-    
-            $html = $this->renderView('pdf/index.html.twig', [
-                'produit' => $produit,
-            ]);
-    
-            $dompdf->loadHtml($html);
-    
-            $dompdf->setPaper('A4', 'portrait');
-    
-            $dompdf->render();
-    
-            return new Response(
-                $dompdf->output(),
-                200,
-                [
-                    'Content-Type' => 'application/pdf',
-                ]
-            );
-        }
 }
 
+   
+   

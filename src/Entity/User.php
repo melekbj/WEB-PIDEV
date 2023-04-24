@@ -90,6 +90,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // set default value for etat field
         // $this->etat = 0;
         $this->ratingProduits = new ArrayCollection();
+        $this->produit_liked = new ArrayCollection();
+        $this->likedislikes = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -437,6 +440,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: RatingProduit::class)]
     private Collection $ratingProduits;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Likedislike::class)]
+    private Collection $likedislikes;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Commentaire::class)]
+    private Collection $commentaires;
+
+   
+
     public function getResetToken(): ?string
     {
         return $this->resetToken;
@@ -529,5 +540,69 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->imageFile;
     }
 
+    /**
+     * @return Collection<int, Likedislike>
+     */
+    public function getLikedislikes(): Collection
+    {
+        return $this->likedislikes;
+    }
+
+    public function addLikedislike(Likedislike $likedislike): self
+    {
+        if (!$this->likedislikes->contains($likedislike)) {
+            $this->likedislikes->add($likedislike);
+            $likedislike->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikedislike(Likedislike $likedislike): self
+    {
+        if ($this->likedislikes->removeElement($likedislike)) {
+            // set the owning side to null (unless already changed)
+            if ($likedislike->getUser() === $this) {
+                $likedislike->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commentaire>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires->add($commentaire);
+            $commentaire->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getUser() === $this) {
+                $commentaire->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
+
+
+   
     
 }

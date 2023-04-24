@@ -101,11 +101,7 @@
         {# Contact #}
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCIwF204lFZg1y4kPSIhKaHEXMLYxxuMhA"></script>
         <script src="{{ asset('Assets/js/contact_custom.js')}}"></script>
-          <!-- Flashy depends on jQuery -->
-    <script src="//code.jquery.com/jquery.js"></script>
-    <!-- Load Flashy default JavaScript -->
-    <script src="{{ asset('bundles/mercuryseriesflashy/js/flashy.js') }}"></script>
-        
+         
 
 
         {% endblock %}
@@ -567,6 +563,11 @@
             </div>
         </footer> 
     {% endblock %}
+     <!-- Flashy depends on jQuery -->
+    <script src="//code.jquery.com/jquery.js"></script>
+    <!-- Load Flashy default JavaScript -->
+    <script src="{{ asset('bundles/mercuryseriesflashy/js/flashy.js') }}"></script>
+        
      <!-- Include Flashy default partial -->
     {{ include('@MercurySeriesFlashy/flashy.html.twig') }}
 
