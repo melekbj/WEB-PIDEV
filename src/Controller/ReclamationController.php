@@ -17,7 +17,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class ReclamationController extends AbstractController
 {
     #[Route('/addReclamationProduit', name: 'app_reclamation')]
-    public function addAction(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function addAction(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, int $userId = null): Response
     {
         $reclamation = new Reclamation();
         $typeReclamation = $entityManager->getRepository(TypeReclamation::class)->findOneBy(['nom' => 'Produit']);
@@ -57,7 +57,10 @@ class ReclamationController extends AbstractController
 
                 $reclamation->setimage($newFilename);
             }
-            $reclamation->setClientId(7);
+            $user = $this->getUser();
+if ($user) {
+    $reclamation->setClientId($user->getId());
+}
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($reclamation);
             $entityManager->flush();

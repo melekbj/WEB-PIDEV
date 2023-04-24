@@ -4,13 +4,8 @@
 
 {% block body %}
 
-    {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
-
-
-
-
+<div class="mb-3 text-center">
+    <a href="{{ path('app_reclamation', {'userId': app.user.id}) }}" class="btn btn-primary">Ajouter Réclamation</a>
+     <a href="{{ path('userReclamation', {'client_id': app.user.id}) }}" class="btn btn-primary">Mes Reclamations</a>
+</div>
 {% endblock %}
