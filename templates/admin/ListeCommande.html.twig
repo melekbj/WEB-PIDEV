@@ -89,11 +89,15 @@
 																			</td>
 																		{% elseif commande.etat is same as('Progress')  %}
 																			<td>
-																				<span class="badge bg-label-danger me-1">Progress</span>
+																				<span class="badge bg-label-secondary me-1">Progress</span>
 																			</td>
-																		{% else %}
+																		{% elseif commande.etat is same as('Completed') %}
 																			<td>
 																				<span class="badge bg-label-success me-1">Completed</span>
+																			</td>
+																			{% else %}
+																			<td>
+																				<span class="badge bg-label-danger me-1">Canceled</span>
 																			</td>
 																		{% endif %}
 

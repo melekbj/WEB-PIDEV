@@ -31,7 +31,7 @@
 											<div class="card-body">
 
 												<div class="card">
-													<h5 class="card-header">Liste Commande</h5>
+													<h5 class="card-header">Liste Detail de Commande</h5>
 													<div class="table-responsive text-nowrap">
 														<table
 															class="table">
@@ -69,10 +69,10 @@
 
 
 																		<td>
-
-																			{{ detail.commande.id }}
+																				{{ detail.commande.id }}
 																			
-																		</td>
+																			
+																			
 
 																		<td>
 																			<a href="{{ path('app_commande_admin', {'userc': detail.commande.user.id}) }}">
@@ -91,11 +91,15 @@
 																			</td>
 																		{% elseif detail.etat is same as('Progress')  %}
 																			<td>
-																				<span class="badge bg-label-danger me-1">Progress</span>
+																				<span class="badge bg-label-secondary me-1">Progress</span>
 																			</td>
-																		{% else %}
+																		{% elseif detail.etat is same as('Completed') %}
 																			<td>
 																				<span class="badge bg-label-success me-1">Completed</span>
+																			</td>
+																			{% else %}
+																			<td>
+																				<span class="badge bg-label-danger me-1">Canceled</span>
 																			</td>
 																		{% endif %}
 
