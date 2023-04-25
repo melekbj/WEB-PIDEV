@@ -130,8 +130,7 @@ class AdminController extends AbstractController
     
     #[Route('/store', name: 'app_store_index', methods: ['GET'])]
     public function liststore(StoreRepository $storeRepository, EntityManagerInterface $entityManager,Request $request,FlashyNotifier $flashy): Response
-    {            $flashy->warning('deleted successfully!.', 5000);
-
+    {
         $location=$request->get('localtion');
         $nom=$request->get('nom');
 
@@ -214,7 +213,8 @@ class AdminController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($store);
             $entityManager->flush();
-            
+            $flashy->error('store has been deleted succesfully!', 'https://your-awesome-link.com');
+
 
         return $this->redirectToRoute('app_store_index');
     }

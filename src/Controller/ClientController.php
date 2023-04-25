@@ -50,7 +50,7 @@ class ClientController extends AbstractController
                
 
                 $ratingRepository->save($rating, true);
-                $flashy->success('rating successfully edited', 5000);
+                $flashy->warning('Welcome to your store', 'https://your-awesome-link.com');
 
             } else {
                 $userRating->setStore($store);
@@ -58,8 +58,8 @@ class ClientController extends AbstractController
 
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($userRating);
-                $entityManager->flush();           
-                $flashy->success('rating successfully inserted', 5000);
+                $entityManager->flush();      
+                $flashy->success('rating successfully inserted', 'https://your-awesome-link.com');
 
             }
 

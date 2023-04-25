@@ -3,9 +3,18 @@
 {% block title %}Store{% endblock %}
 {% block body %}
 
+
 <br><br><br><br><br><br><br><br><br><br><br>
 <h1>Store</h1>
+    <head>
+<!-- Flashy depends on jQuery -->
+    <script src="//code.jquery.com/jquery.js"></script>
 
+    <link rel="stylesheet" href="{{ asset('bundles/mercuryseriesflashy/css/flashy.css') }}">
+    <!-- Load Flashy default JavaScript -->
+    <script src="{{ asset('bundles/mercuryseriesflashy/js/flashy.js') }}"></script>
+        {{ include('@MercurySeriesFlashy/flashy.html.twig') }}
+</head>
 <table class="table">
     <tbody>
         <tr>

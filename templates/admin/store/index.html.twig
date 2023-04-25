@@ -3,7 +3,15 @@
 {% block title %}Store index{% endblock %}
 
 {% block body %}
+    <head>
+<!-- Flashy depends on jQuery -->
+    <script src="//code.jquery.com/jquery.js"></script>
 
+    <link rel="stylesheet" href="{{ asset('bundles/mercuryseriesflashy/css/flashy.css') }}">
+    <!-- Load Flashy default JavaScript -->
+    <script src="{{ asset('bundles/mercuryseriesflashy/js/flashy.js') }}"></script>
+        {{ include('@MercurySeriesFlashy/flashy.html.twig') }}
+</head>
     <h1>Store index</h1>
 
 

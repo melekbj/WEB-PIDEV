@@ -50,7 +50,7 @@ class PartnerController extends AbstractController
             $entityManager->flush();
     
             return $this->redirectToRoute('app_store_show_partner', ['id' => $store->getId()]);
-            $flashy->success('store successfully created', 5000);
+            $flashy->success('Welcome to your newly createdstore', 'https://your-awesome-link.com');
 
         }
     
@@ -60,13 +60,15 @@ class PartnerController extends AbstractController
     }
      
     #[Route('/partner/show/{id?}', name: 'app_store_show_partner')]
-    public function show(?int $id, StoreRepository $storeRepository, RatingRepository $ratingRepository): Response
+    public function show(?int $id, StoreRepository $storeRepository, RatingRepository $ratingRepository,FlashyNotifier $flashy): Response
     {//TODO: add the rating methode and test if it is first time create a new insert else do an edit   
         if ($id === null) {
             return $this->redirectToRoute('app_store_new_partner');
         } else {
             $store = $storeRepository->find($id);
             $rating = $ratingRepository->getAverageStoreRating($id);
+            $flashy->success('Welcome to your store', 'https://your-awesome-link.com');
+
                      return $this->render('partner/store/show.html.twig', [
                 'store' => $store,
                 'rating' => $rating
@@ -75,16 +77,16 @@ class PartnerController extends AbstractController
     }
     
     #[Route('/partner/edit/{id}', name: 'app_store_edit_partner', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Store $store, StoreRepository $storeRepository): Response
+    public function edit(Request $request, Store $store, StoreRepository $storeRepository,FlashyNotifier $flashy): Response
     {
         $form = $this->createForm(StoreType::class, $store);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $storeRepository->save($store, true);
+            $flashy->success('your store has been updated!', 'https://your-awesome-link.com');
 
             return $this->redirectToRoute('app_partner', [], Response::HTTP_SEE_OTHER);
-            $flashy->success('store successfully edited', 5000);
 
         }
 
@@ -94,17 +96,15 @@ class PartnerController extends AbstractController
          ]);
     }
 
-    #[Route('/partner/delete/{id}', name: 'app_store_delete_partner', methods: ['POST'])]
-    public function delete(Request $request, Store $store): Response
-    {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($store);
-            $entityManager->flush();
-            
-            $this->addFlash('success', 'Store deleted successfully');
-
-        return $this->redirectToRoute('app_partner');
-    }
+    //#[Route('/partner/delete/{id}', name: 'app_store_delete_partner', methods: ['POST'])]
+    //public function delete(Request $request, Store $store): Response
+    //{
+    //        $entityManager = $this->getDoctrine()->getManager();
+    //        $entityManager->remove($store);
+    //        $entityManager->flush();
+    //        $this->addFlash('success', 'Store deleted successfully');
+    //    return $this->redirectToRoute('app_partner');
+    //} 
 
 
 }
