@@ -335,7 +335,7 @@
                                     {% elseif app.user and app.user.getRoles() == 'ROLE_ADMIN' %}
                                     <li><a href="{{path('app_admin')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 {% elseif app.user and app.user.getRoles() == 'ROLE_PARTNER' %}
-                                    <li><a href="{{path('app_partner')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                                    <li><a href="{{path('app_par_commands')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 {% else %}
                                         <li><a href="{{path('app_login')}}"><i class="fa fa-user" aria-hidden="true"></i></a></li>
 

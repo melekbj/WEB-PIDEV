@@ -247,10 +247,10 @@ class ClientController extends AbstractController
             Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
             // create a card object with the informations
             $card = new Card();
-            $card->number = $paymentData['cardNumber'];
-            $card->exp_month = $paymentData['expirationMonth'];
-            $card->exp_year = $paymentData['expirationYear'];
-            $card->cvc = $paymentData['cvc'];
+            $card->number = $paymentData['cardNumber']; // 16 numere
+             $card->exp_month = $paymentData['expirationMonth']; // 01-12
+            $card->exp_year = $paymentData['expirationYear']; // > current year
+            $card->cvc = $paymentData['cvc']; // secret code
             $card->address_zip = '12345';
             // Create a new Stripe customer
             // Create a new Stripe token from the card details
