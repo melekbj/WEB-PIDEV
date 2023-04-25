@@ -3,7 +3,10 @@
 {% block title %}Store index{% endblock %}
 
 {% block body %}
+
     <h1>Store index</h1>
+
+
 <form action="{{ path('app_store_index') }}" method="get">
     <input type="text" name="nom">
     <select  name="localtion">
@@ -94,4 +97,5 @@
         {% endfor %}
         </tbody>
     </table>
+
 {% endblock %}

@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use MercurySeries\FlashyBundle\FlashyNotifier;
 
 class ClientController extends AbstractController
 {
@@ -28,7 +29,7 @@ class ClientController extends AbstractController
         ]);
     }
     #[Route('/client/show/{id?}', name: 'app_store_show_client')]
-    public function show(?int $id, Request $request, StoreRepository $storeRepository, RatingRepository $ratingRepository, UserInterface $user): Response
+    public function show(?int $id, Request $request, StoreRepository $storeRepository, RatingRepository $ratingRepository, UserInterface $user,FlashyNotifier $flashy): Response
     {
         if ($id === null) {
             return $this->redirectToRoute('app_client');
@@ -49,13 +50,18 @@ class ClientController extends AbstractController
                
 
                 $ratingRepository->save($rating, true);
+                $flashy->success('rating successfully edited', 5000);
+
             } else {
                 $userRating->setStore($store);
                 $userRating->setUser($user);
 
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($userRating);
-                $entityManager->flush();            }
+                $entityManager->flush();           
+                $flashy->success('rating successfully inserted', 5000);
+
+            }
 
             }
             $store = $storeRepository->find($id);

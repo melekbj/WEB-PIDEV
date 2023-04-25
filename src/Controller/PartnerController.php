@@ -12,6 +12,8 @@ use App\Entity\Store;
 use Symfony\Component\HttpFoundation\Request; 
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use MercurySeries\FlashyBundle\FlashyNotifier;
+
 
 class PartnerController extends AbstractController
 {
@@ -35,7 +37,7 @@ class PartnerController extends AbstractController
      
     
     #[Route('/partner/new/store', name: 'app_store_new_partner', methods: ['GET', 'POST'])]
-    public function new(Request $request,Security $security): Response
+    public function new(Request $request,Security $security,FlashyNotifier $flashy): Response
     {
         $store = new Store();
         $user = $security->getUser();
@@ -48,6 +50,8 @@ class PartnerController extends AbstractController
             $entityManager->flush();
     
             return $this->redirectToRoute('app_store_show_partner', ['id' => $store->getId()]);
+            $flashy->success('store successfully created', 5000);
+
         }
     
         return $this->render('partner/store/new.html.twig', [
@@ -80,6 +84,8 @@ class PartnerController extends AbstractController
             $storeRepository->save($store, true);
 
             return $this->redirectToRoute('app_partner', [], Response::HTTP_SEE_OTHER);
+            $flashy->success('store successfully edited', 5000);
+
         }
 
         return $this->renderForm('partner/store/edit.html.twig', [

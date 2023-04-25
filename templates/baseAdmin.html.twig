@@ -17,7 +17,7 @@
 
             <!-- Icons. Uncomment required icon fonts -->
             <link rel="stylesheet" href="{{ asset('DashAssets/vendor/fonts/boxicons.css')}}" />
-
+<link rel="stylesheet" href="{{ asset('bundles/mercuryseriesflashy/css/flashy.css') }}">
             <!-- Core CSS -->
             <link rel="stylesheet" href="{{ asset('DashAssets/vendor/css/core.css')}}" class="template-customizer-core-css" />
             <link rel="stylesheet" href="{{ asset('DashAssets/vendor/css/theme-default.css')}}" class="template-customizer-theme-css" />
@@ -40,7 +40,10 @@
         {% endblock %}
 
         {% block javascripts %}
-   
+   <!-- Flashy depends on jQuery -->
+    <script src="//code.jquery.com/jquery.js"></script>
+    <!-- Load Flashy default JavaScript -->
+    <script src="{{ asset('bundles/mercuryseriesflashy/js/flashy.js') }}"></script>
         {# Dash we begin #}
                 <!-- Core JS -->
             <!-- build:js assets/vendor/js/core.js -->
@@ -267,7 +270,8 @@
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
+        <!-- Include Flashy default partial -->
+    {{ include('@MercurySeriesFlashy/flashy.html.twig') }}
     </body>
 </html>
 

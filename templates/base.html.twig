@@ -41,7 +41,7 @@
 	        <link rel="stylesheet" type="text/css" href="{{ asset('LoginAssets/css/main.css')}}">
 {# we began #}
 
-
+<link rel="stylesheet" href="{{ asset('bundles/mercuryseriesflashy/css/flashy.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('Assets/styles/bootstrap4/bootstrap.min.css')}}">
 <link href="{{ asset('Assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="{{ asset('Assets/plugins/OwlCarousel2-2.2.1/owl.carousel.css')}}">
@@ -82,6 +82,10 @@
                 }, 5000);
             </script> #}
 
+<!-- Flashy depends on jQuery -->
+    <script src="//code.jquery.com/jquery.js"></script>
+    <!-- Load Flashy default JavaScript -->
+    <script src="{{ asset('bundles/mercuryseriesflashy/js/flashy.js') }}"></script>
     {# we began #}
         <script src="{{ asset('Assets/js/jquery-3.2.1.min.js')}}"></script>
         <script src="{{ asset('Assets/styles/bootstrap4/popper.js')}}"></script>
@@ -105,6 +109,7 @@
     </head>
 
     <body>
+
     {# {% block Header %}
             <!-- HEADER -->
                 <header>
@@ -499,7 +504,8 @@
 		<!-- /FOOTER -->
     
     {% endblock %} #}
-
+        <!-- Include Flashy default partial -->
+    {{ include('@MercurySeriesFlashy/flashy.html.twig') }}
     {% block footer %}
         <footer class="footer">
             <div class="container">

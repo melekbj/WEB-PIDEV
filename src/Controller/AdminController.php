@@ -22,6 +22,7 @@ use App\Repository\StoreRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Entity\Rating;
 use Doctrine\ORM\EntityManagerInterface;
+use MercurySeries\FlashyBundle\FlashyNotifier;
 
 class AdminController extends AbstractController
 {
@@ -128,8 +129,9 @@ class AdminController extends AbstractController
     // }
     
     #[Route('/store', name: 'app_store_index', methods: ['GET'])]
-    public function liststore(StoreRepository $storeRepository, EntityManagerInterface $entityManager,Request $request): Response
-    {
+    public function liststore(StoreRepository $storeRepository, EntityManagerInterface $entityManager,Request $request,FlashyNotifier $flashy): Response
+    {            $flashy->warning('deleted successfully!.', 5000);
+
         $location=$request->get('localtion');
         $nom=$request->get('nom');
 
@@ -151,15 +153,14 @@ class AdminController extends AbstractController
             }
             $averageRatings[$store->getId()] = $averageRating;
         }
-    
+
         return $this->render('admin/store/index.html.twig', [
             'stores' => $stores,
             'averageRatings' => $averageRatings,
         ]);
     }
-    
-    
 
+  
     // #[Route('/new/store', name: 'app_store_new', methods: ['GET', 'POST'])]
     // public function new(Request $request, StoreRepository $storeRepository): Response
     // {
@@ -208,13 +209,12 @@ class AdminController extends AbstractController
     // }
 
     #[Route('/store/delete/{id}', name: 'app_store_delete', methods: ['POST'])]
-    public function delete(Request $request, Store $store): Response
+    public function delete(Request $request, Store $store,FlashyNotifier $flashy): Response
     {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($store);
             $entityManager->flush();
             
-            $this->addFlash('success', 'Store deleted successfully');
 
         return $this->redirectToRoute('app_store_index');
     }
