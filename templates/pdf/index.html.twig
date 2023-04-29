@@ -3,31 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ evenement.titreEv }}</title>
-      <style>
-        .logo {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px; /* définissez la largeur de votre image */
-            height: auto;
-        }
-
-         body {
-            background-image: url('Assets/images/background.png');
-            background-size: cover;
-        }
+      
     </style>
 </head>
 <body>
+<style>
+<div style=" justify-content: center">
 
-   <img src="{{ asset('Assets/images/logo.png') }}" alt="Logo" class="logo">
+       <style>
+    * {
+        font-family: Arial, sans-serif;
+    }
+
+    .card {
+        margin: 0 auto;
+        max-width: 1000px;
+        border: 2px solid black;
+        padding: 10px;
+    }
+/* Set a common style for all paragraphs */
+p {
+  font-size: 18px;
+  font-weight: bold;
+  color:  #245393 ;
+}
+
+/* Style the event title */
+h1 {
+  color: red;
+}
+
+/* Add spacing between paragraphs */
+p + p {
+  margin-top: 10px;
+}
+
+/* Style the QR code image */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+}
+ h1 {
+        text-align: center;
+       
+    }
+</style>
+<div class="card" style="display: flex; align-items: center; justify-content: center; margin-top: 20px;">
+<br>
+  
    <h1 style="color: red">{{ evenement.titreEv }}</h1>
-  <p style="color: blue; font-size: 18px; font-weight: bold;">Date de début : {{ evenement.dateDebut|date('d/m/Y') }}</p>
-    <p style="color: blue; font-size: 18px; font-weight: bold;">Date de fin : {{ evenement.dateFin|date('d/m/Y') }}</p>
-    <p style="color: blue; font-size: 18px; font-weight: bold;">Lieu : {{ evenement.lieuEv }}</p>
-  <p style="color: blue; font-size: 18px; font-weight: bold;">Description : {{ evenement.DescEv }}</p>
-<p style="color: blue; font-size: 18px; font-weight: bold;">Nombre maximum de participants : {{ evenement.nbMax }}</p>
+   <br>
+  <p >Date de début : {{ evenement.dateDebut|date('d/m/Y') }}</p>
+    <p>Date de fin : {{ evenement.dateFin|date('d/m/Y') }}</p>
+    <p >Lieu : {{ evenement.lieuEv }}</p>
+  <p>Description : {{ evenement.DescEv }}</p>
+<p >Nombre maximum de participants : {{ evenement.nbMax }}</p>
 <img src="{{ simple }}" alt="QR code">
-
+</div>
+</div>
 </body>
 </html>

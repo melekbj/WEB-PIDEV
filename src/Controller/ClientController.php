@@ -33,29 +33,55 @@ class ClientController extends AbstractController
 
     #[Route('/updateU/{id}', name: 'app_edit')]
     public function updateU($id, Request $request, ReservationRepository $rep, ManagerRegistry $doctrine): Response
-    {
-  
-        // récupérer la classe à modifier
-        $users = $rep->find($id);
-        // créer un formulaire
-        $form = $this->createForm(ReservationType::class, $users);
-        // récupérer les données saisies
-        $form->handleRequest($request);
-        // vérifier si le formulaire est soumis et valide
-        if ($form->isSubmitted() && $form->isValid()) {
+    {     
+        // récupérer la réservation à modifier
+        $reservation = $rep->find($id);
+        
+        // Vérifier si la date de la réservation est vieille de plus de 24 heures
+        $dateReservation = $reservation->getDate();
+        $now = new \DateTime();
+        $interval = $now->diff($dateReservation);
+        $hoursDiff = $interval->h + ($interval->days * 24);
+    
+        if ($hoursDiff <= 24) {
+            // créer un formulaire
+            $form = $this->createForm(ReservationType::class, $reservation);
+    
             // récupérer les données saisies
-            $users = $form->getData();
-            // persister les données
-            $rep = $doctrine->getManager();
-            $rep->persist($users);
-            $rep->flush();
-            //flash message
-            $this->addFlash('success', 'User updated successfully!');
+            $form->handleRequest($request);
+    
+            // vérifier si le formulaire est soumis et valide
+            if ($form->isSubmitted() && $form->isValid()) {
+                // récupérer les données saisies
+                $reservationUpdated = $form->getData();
+    
+                // Calculer la différence entre le nombre de places réservées avant et après la modification
+                $nbPlacesReservedBefore = $reservation->getNbPlaces();
+                $nbPlacesReservedAfter = $reservationUpdated->getNbPlaces();
+                $nbPlacesDiff = $nbPlacesReservedBefore - $nbPlacesReservedAfter;
+    
+                // Incrémenter ou décrémenter le champ nbMax par la différence de places réservées
+                $evenement = $reservation->getEvent();
+                $evenement->setNbMax($evenement->getNbMax() + $nbPlacesDiff);
+    
+                // Persister les données
+                $em = $doctrine->getManager();
+                $em->persist($reservationUpdated);
+                $em->flush();
+    
+                // Flash message
+                $this->addFlash('success', 'Reservation updated successfully!');
+                return $this->redirectToRoute('app_client');
+            }
+    
+            return $this->render('client/editReservation.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        } else {
+            // La réservation ne peut pas être modifiée car moins de 24 heures se sont écoulées depuis la réservation
+            $this->addFlash('error', 'Reservation cannot be updated as less than 24 hours have passed since it was made.');
             return $this->redirectToRoute('app_client');
         }
-        return $this->render('client/editReservation.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
 
     #[Route('/delete/{id}', name: 'app_deleteReservation')]

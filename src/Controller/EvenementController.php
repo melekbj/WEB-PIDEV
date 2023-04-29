@@ -102,7 +102,7 @@ class EvenementController extends AbstractController
 
 
     #[Route('/detailEvent/{id}', name: 'app_event_detail', methods: ["GET", "POST"] )]
-    public function showev($id, EvenementRepository $rep, Request $request, PersistenceManagerRegistry $doctrine): Response
+public function showev($id, EvenementRepository $rep, Request $request, PersistenceManagerRegistry $doctrine): Response
 {
     $evenement = $rep->find($id);
     $event = new Reservation();
@@ -117,18 +117,24 @@ class EvenementController extends AbstractController
         // Decrement the nbMax field by the number of places reserved
         $evenement->setNbMax($evenement->getNbMax() - $nbPlacesReserved);
 
-        $entityManager->persist($event);
-        $entityManager->persist($evenement); // persist the changes to the Evenement entity
-        $entityManager->flush();
-        $this->addFlash('success', 'Reservation ajouté avec succès');
-        return $this->redirectToRoute('app_home');
+        if ($evenement->getNbMax() >= 0) { // Check if there are still places available
+            $entityManager->persist($event);
+            $entityManager->persist($evenement); // persist the changes to the Evenement entity
+            $entityManager->flush();
+            $this->addFlash('success', 'Reservation ajouté avec succès');
+            return $this->redirectToRoute('app_home');
+        } else {
+            $this->addFlash('danger', 'Désolé, cet événement est complet.');
+            return $this->redirectToRoute('app_event_detail', ['id' => $id]);
+        }
     }
 
-    return $this->render('evenement/show.html.twig', [
+    return $this->render('evenement/showClient.html.twig', [
         'evenement' => $evenement,
         'form' => $form->createView(),
     ]);
 }
+
 
 
        

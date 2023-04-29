@@ -40,7 +40,7 @@
                 <td>{{ evenement.DescEv }}</td>
                 <td>{{ evenement.nbMax }}</td>
                 <td>
-                    <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}">show</a>
+                    <a href="{{ path('app_event_detail', {'id': evenement.id}) }}">show</a>
                     <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}">edit</a>
                      <a href="{{ path('app_evenement_pdf', {'id': evenement.id}) }}">pdf</a>
                 </td>
