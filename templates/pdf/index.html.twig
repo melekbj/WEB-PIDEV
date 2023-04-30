@@ -3,13 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ produit.nom }}</title>
+    <style>
+        body {
+            font-family: Arial;
+            font-size: 15px;
+            color: #333;
+            
+        }
+        h1 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: green;
+        }
+        .photo {
+            margin-bottom: 20px;
+        }
+        .prix {
+            color: green;
+        }
+        .quantite {
+            color: blue;
+        }
+        .etat {
+            font-style: italic;
+              color: blue;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ produit.nom }}</h1>
-    <p>Photo : {{ produit.photo }}</p>
-    <p>Prix : {{ produit.prix }}</p>
-    <p>Quantite : {{ produit.quantite }}</p>
-    <p>Etat : {{ produit.etat }}</p>
-    
+    <div class="photo">
+        <p>Photo : {{ produit.photo }}</p>
+    </div>
+    <div class="prix">
+        <p>Prix : {{ produit.prix }}</p>
+    </div>
+    <div class="quantite">
+        <p>Quantite : {{ produit.quantite }}</p>
+    </div>
+    <div class="etat">
+        <p>Etat : {{ produit.etat }}</p>
+    </div>
 </body>
 </html>

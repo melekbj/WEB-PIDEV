@@ -41,6 +41,8 @@
                 <td>
                     <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
                     <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+                    <button class="btn btn-primary" onclick="window.location.href='{{ path('produit_pdf', {'id': produit.id}) }}'">pdf</button>
+
                 </td>
             </tr>
         {% else %}
@@ -53,7 +55,7 @@
 
     <a href="{{ path('app_produit_new') }}">Create new</a>
     <div  style="  margin-top: 10px;">
-<button class="btn btn-primary" onclick="window.location.href='{{ path('app_categorie_index') }}'">categorie view</button>
+<button class="btn btn-primary" onclick="window.location.href='{{ path('app_produit_affichage') }}'">affichage</button>
 </div>
 
      

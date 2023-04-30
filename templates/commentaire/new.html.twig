@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Commentaire{% endblock %}
+
+{% block body %}
+<br> </br>
+<br> </br>
+<br> </br>
+<br> </br>
+<br> </br>
+ <br> </br>   <h1>Create new Commentaire</h1>
+
+   <br> </br> {{ include('commentaire/_form.html.twig') }}
+
+    <br> </br><a href="{{ path('app_commentaire_index') }}">back to list</a>
+    <button class="btn btn-primary" onclick="window.location.href='{{ path('app_produit_affichage') }}'">affichage</button>
+<br> </br>{% endblock %}

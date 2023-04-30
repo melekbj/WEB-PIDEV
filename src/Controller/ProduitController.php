@@ -55,13 +55,13 @@ class ProduitController extends AbstractController
             $produitRepository->save($produit, true);
             $flashy->success('Article successfully created', 5000);
             $nom=$produit->getNom();
-            /*$message = $client->messages->create(
+            $message = $client->messages->create(
                 "+21621184125",
                 [
                     'from' => '+16812025444',
                     'body' => "A new product is available in our shop product name : ".$nom,
                 ]
-            );*/
+            );
            /* $this->addFlash('success', 'Produit successfully created');*/
 
             
@@ -91,7 +91,7 @@ class ProduitController extends AbstractController
             'produits' => $produits,
         ]);
     }
-    #[Route('/produit/{id?}/pdf', name: 'produit_pdf')]
+    /*#[Route('/produit/{id?}/pdf', name: 'produit_pdf')]
     public function pdf(Produit $produit): Response
     {
         $options = new OptionsResolver();
@@ -120,7 +120,43 @@ class ProduitController extends AbstractController
                 'Content-Type' => 'application/pdf',
             ]
         );
-    }
+    }*/
+    #[Route('/produit/{id?}/pdf', name: 'produit_pdf')]
+public function pdf(Produit $produit): Response
+{
+    // Configuration des options par défaut pour le générateur de PDF
+    $options = new OptionsResolver();
+    $options->setDefaults([
+        'defaultFont' => 'Arial',
+        'fontSize' => 12,
+    ]);
+    
+    // Instanciation du générateur de PDF
+    $dompdf = new Dompdf($options);
+
+    // Récupération du code HTML du template Twig
+    $html = $this->renderView('pdf/index.html.twig', [
+        'produit' => $produit,
+    ]);
+
+    // Chargement du code HTML dans le générateur de PDF
+    $dompdf->loadHtml($html);
+
+    // Configuration du format de papier et de l'orientation
+    $dompdf->setPaper('A4', 'portrait');
+
+    // Génération du PDF
+    $dompdf->render();
+
+    // Retourne le PDF en tant que réponse HTTP
+    return new Response(
+        $dompdf->output(),
+        200,
+        [
+            'Content-Type' => 'application/pdf',
+        ]
+    );
+}
 
 
 
