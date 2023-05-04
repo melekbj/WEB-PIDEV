@@ -1,0 +1,177 @@
+{% extends 'baseClient.html.twig' %}
+
+{% block title %}SS | Home{% endblock %}
+
+{% block body %}
+
+
+<div class="row" id="proBanner">
+     
+    </div>
+    <div class="container-scroller">
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+
+
+              <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Historique des reclamations</h4>
+                  <div class="table-responsive pt-3">
+                {% for message in app.flashes('success') %}
+                  <div class="alert alert-success">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+                {% for message in app.flashes('error') %}
+                  <div class="alert alert-danger">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          {# <th>
+                            ID
+                          </th>
+                          <th>
+                            User
+                          </th> #}
+                          <th>
+                            Date
+                          </th>
+                          <th>
+                            Type
+                          </th>
+                          <th>
+                            Image
+                          </th>
+                          <th>
+                            Etat
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for rec in reclamations %}
+                        <tr>
+                          {# <td>
+                            {{rec.id}}
+                          </td>
+                          <td>
+                            {{rec.user.nom}}
+                          </td> #}
+                          <td>
+                            {{rec.date| date('Y-M-D')}}
+                          </td>
+                          <td>
+                            {{rec.type.nom}}
+                          </td>
+                          {% set imageUrl = vich_uploader_asset(rec, 'imageFile') %}
+                          <td class="py-1">
+                            <img src="{{ asset(imageUrl) }}" alt="image"/>
+                          </td>
+                        
+                          {% if rec.etat == 'accepted' %}
+                          
+                          <td>
+                            <label class="badge badge-success">Approved</label>
+                          </td>
+                          {% elseif rec.etat == 'pending' %}
+                          <td>
+                            <label class="badge badge-info">Pending</label>
+                          </td>
+                          {% else %}
+                            <td>
+                            <label class="badge badge-danger">Rejected</label>
+                          </td>
+                          {% endif %}
+                          
+                          
+                        </tr>
+                        {% endfor %}
+
+                      </tbody>
+                    </table>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+         
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+
+      <!-- page-body-wrapper ends -->
+    </div
+
+
+
+<div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Striped Table</h4>
+                  <p class="card-description">
+                    Add class <code>.table-striped</code>
+                  </p>
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>
+                            User
+                          </th>
+                          <th>
+                            First name
+                          </th>
+                          <th>
+                            Progress
+                          </th>
+                          <th>
+                            Amount
+                          </th>
+                          <th>
+                            Deadline
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="py-1">
+                            <img src="../../images/faces/face1.jpg" alt="image"/>
+                          </td>
+                          <td>
+                            Herman Beck
+                          </td>
+                          <td>
+                            <div class="progress">
+                              <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                          </td>
+                          <td>
+                            $ 77.99
+                          </td>
+                          <td>
+                            May 15, 2015
+                          </td>
+                        </tr>
+                      
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+{% endblock %}

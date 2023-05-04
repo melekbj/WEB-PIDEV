@@ -1,0 +1,190 @@
+{% extends "base.html.twig" %}
+{% block title %}SS | Products
+{% endblock %}
+{% block body %}
+
+
+	<div class="container single_product_container">
+		<div class="row">
+			<div
+				class="col">
+
+				<!-- Breadcrumbs -->
+
+				<div class="breadcrumbs d-flex flex-row align-items-center">
+					<ul>
+						<li>
+							<a href="index.html">Home</a>
+						</li>
+						<li>
+							<a href="categories.html">
+								<i class="fa fa-angle-right" aria-hidden="true"></i>Men's</a>
+						</li>
+						<li class="active">
+							<a href="#">
+								<i class="fa fa-angle-right" aria-hidden="true"></i>Single Product</a>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="row" >
+			<div class="col-lg-6">
+				<div class="single_product_pics">
+					<div class="row">
+						<div class="col-lg-3 thumbnails_col order-lg-1 order-2">
+							<div class="single_product_thumbnails"></div>
+						</div>
+						<div class="col-lg-9 image_col order-lg-2 order-1">
+							<div class="single_product_image">
+								<div>
+									{% if stores.photo %}
+										{% set imageUrl = vich_uploader_asset(stores, 'imageFile') %}
+										<img style="width:275px;" src="{{ asset(imageUrl) }}" alt="img"/>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-5">
+				<div class="product_details">
+					<div class="product_details_title">
+						<h2>{{stores.nom}}</h2>
+						<p>Nam tempus turpis at metus scelerisque placerat nulla deumantos solicitud felis. Pellentesque diam dolor, elementum etos lobortis des mollis ut...</p>
+					</div>
+					<div>
+					{# {% if not app.user or app.user.getRoles() == 'ROLE_CLIENT'  %} #}
+					{{ form_start(form) }}
+                    {{ form_widget(form.rate, { 'attr': {'class': 'star-rating'} }) }}
+					<div class="star-rating">
+                            {% set ratingValue = rating|round(1) %}
+                            {% set fullStars = ratingValue|round(0, 'ceil') %}
+                            {% set emptyStars = 5 - fullStars %}
+                            {% for i in 1..fullStars %}
+                               <i class="fa fa-star" aria-hidden="true"></i>
+                            {% endfor %}
+                            {% if ratingValue > fullStars %}
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                                {% set emptyStars = emptyStars - 1 %}
+                            {% endif %}
+                            {% for i in 1..emptyStars %}
+                                <i class="fa fa-star-o" aria-hidden="true"></i>
+                            {% endfor %}
+                            <span class="rating-value">{{ ratingValue }}</span>
+                        </div>
+                    {{ form_end(form) }}
+                {# {% else %} #}
+                    {# {% if rating %}
+                        <div class="star-rating">
+                            {% set ratingValue = rating|round(1) %}
+                            {% set fullStars = ratingValue|round(0, 'ceil') %}
+                            {% set emptyStars = 5 - fullStars %}
+                            {% for i in 1..fullStars %}
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                            {% endfor %}
+                            {% if ratingValue > fullStars %}
+                               <i class="fa fa-star-o" aria-hidden="true"></i>
+                                {% set emptyStars = emptyStars - 1 %}
+                            {% endif %}
+                            {% for i in 1..emptyStars %}
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                            {% endfor %}
+                            <span class="rating-value">{{ ratingValue }}</span>
+                        </div>
+                    {% endif %} #}
+                {# {% endif %} #}
+					
+					</div>
+					{# <div class="free_delivery d-flex flex-row align-items-center justify-content-center">
+						<span class="ti-truck"></span>
+						<span>free delivery</span>
+					</div> #}
+				</div>
+
+
+			</div>
+		
+			<div class="best_sellers" style ="margin-top:-150px;">
+				<div class="container">
+					<div class="row">
+						<div class="col text-center">
+							<div class="section_title new_arrivals_title">
+								<h2>Products related</h2>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<div class="product_slider_container">
+								<div
+									class="owl-carousel owl-theme product_slider">
+									{% if  produits is empty %}
+										<p>Aucun produit disponible pour le moment.</p>
+
+									{% else %}
+
+
+										<!-- Slide 1 -->
+										{% for produit in produits %}
+											<div class="owl-item product_slider_item">
+												<div class="product-item">
+													<div class="product discount">
+														<div class="product_image">
+															{% if produit.photo %}
+																{% set imageUrl = vich_uploader_asset(produit, 'imageFile') %}
+																<img src="{{ asset(imageUrl) }}" alt="img"/>
+															{% endif %}
+														</div>
+														<div class="favorite favorite_left"></div>
+														<div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
+															<span>-$20</span>
+														</div>
+														<div class="product_info">
+															<h6 class="product_name mt-3">
+																<a href="single.html">{{produit.nom}}</a>
+															</h6>
+															<h6 class="product_name mt-3">
+																<a href="single.html">{{produit.quantite}}
+																	piéces en stock</a>
+															</h6>
+															<div class="product_price">{{produit.prix}}
+																DT</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										{% endfor %}
+									{% endif %}
+
+
+								</div>
+
+
+								<!-- Slider Navigation -->
+
+								<div class="product_slider_nav_left product_slider_nav d-flex align-items-center justify-content-center flex-column">
+									<i class="fa fa-chevron-left" aria-hidden="true"></i>
+								</div>
+								<div class="product_slider_nav_right product_slider_nav d-flex align-items-center justify-content-center flex-column">
+									<i class="fa fa-chevron-right" aria-hidden="true"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<!-- Tabs -->
+
+
+{% endblock %}
+

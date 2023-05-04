@@ -1,0 +1,74 @@
+
+
+
+{% extends 'baseClient.html.twig' %}
+
+{% block title %}SS | Home{% endblock %}
+
+{% block body %}
+
+<!-- partial -->
+      <div class="main-panel">        
+        <div class="content-wrapper">
+          <div class="row">
+            
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                {% for message in app.flashes('success') %}
+																<div class="alert alert-success">
+																	{{ message }}
+																</div>
+															{% endfor %}
+															{% for message in app.flashes('error') %}
+																<div class="alert alert-danger">
+																	{{ message }}
+																</div>
+															{% endfor %}
+                  <h4 class="card-title">Update Profile Informations</h4>
+                  <div><img class="mb-3" style="width:175px;" src="{{ asset('images/users/' ~ image) }}" alt="user-avatar" ></div>
+                  
+                  {{ form_start(form, {'attr': {'class': 'your-form-class'}}) }}
+                        
+                        <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.nom, {'label': 'Nom', 'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.prenom, {'label': 'Prenom', 'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.genre, {'label': 'Genre', 'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.age, {'label': 'Age', 'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.ville, {'label': 'Ville', 'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.adresse, {'label': 'Address', 'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.phone, {'label': 'Phone Number', 'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form_row(form.email, {'label': 'E-mail', 'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+                                </div>
+                        </div>
+
+                {{ form_end(form) }}
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+
+      </div>
+<!-- main-panel ends -->
+
+
+
+{% endblock %}
