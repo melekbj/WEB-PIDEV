@@ -125,7 +125,11 @@ class Produit
 
         return $this;
     }
-
+ /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $user;
     public function getUser(): ?user
     {
         return $this->user;
