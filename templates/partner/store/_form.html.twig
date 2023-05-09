@@ -3,7 +3,7 @@
     {{ form_row(form.location) }}
     <div>
         {# <img id="preview" src="{{ asset('path/to/default/image.jpg') }}" alt="Preview" width="200"> #}
-        {{ form_row(form.imageFile) }}
+        {{ form_row(form.photo) }}
     </div>
     {{ form_row(form.categorie) }}
     {{ form_row(form.ville) }}
@@ -14,7 +14,7 @@
 {% block javascripts %}
     <script>
         // get the input element and the image element
-        var input = document.getElementById('{{ form.imageFile.vars.id }}');
+        var input = document.getElementById('{{ form.photo.vars.id }}');
         var preview = document.getElementById('preview');
 
         // when the user selects a file, update the preview image

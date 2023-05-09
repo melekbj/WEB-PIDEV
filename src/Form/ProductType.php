@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
@@ -27,10 +28,15 @@ class ProductType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('imageFile', VichFileType::class, [
-                'required' => true,
-                'allow_delete' => false,
-                'download_uri' => true,
+            // ->add('imageFile', VichFileType::class, [
+            //     'required' => true,
+            //     'allow_delete' => false,
+            //     'download_uri' => true,
+            // ])
+            ->add('photo', FileType::class, [
+                'required' => false,
+                'label' => 'Profile Picture',
+                'data_class' => null,
             ])
             ->add('prix', null, [
                 'constraints' => [

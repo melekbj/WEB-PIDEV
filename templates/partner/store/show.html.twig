@@ -164,10 +164,9 @@
                         {% if store.photo is not empty %}
                         <tr>
                             <th>Photo</th>
-                            <td>{% if store.photo %}
-                                  {% set imageUrl = vich_uploader_asset(store, 'imageFile') %}
-                                  <img style="width:75px;" src="{{ asset(imageUrl) }}" alt="img" />
-                                {% endif %}</td>
+                            <td>
+                                  <img style="width:75px;" src="" alt="img" />
+                                </td>
                         </tr>
                         {% endif %}
                         <tr>

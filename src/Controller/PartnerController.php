@@ -57,88 +57,103 @@ class PartnerController extends AbstractController
 
 // .........................................Gestion Store..........................................................
    
-    #[Route('/', name: 'app_partner')]
-    public function index(StoreRepository $storeRepository, Security $security): Response
-    {
-            
-            $user = $security->getUser();
-            $store = $storeRepository->findStoreByUserId($user->getId());
+#[Route('/', name: 'app_partner')]
+public function index(StoreRepository $storeRepository, Security $security): Response
+{
+        
+        $user = $security->getUser();
+        $store = $storeRepository->findStoreByUserId($user->getId());
 
-            if ($store !== null) {
-                return $this->redirectToRoute('app_store_show_partner', [
-                    
-                    // 'image' => $image
-                ]);
-            } else {
-                // Handle the case where the user doesn't have a store
-                // For example, you could redirect them to the new store page
-                return $this->redirectToRoute('app_store_new_partner');
-            }
-    }
- 
-
-    #[Route('/new/store', name: 'app_store_new_partner', methods: ['GET', 'POST'])]
-    public function newStore(Request $request,Security $security): Response
-    {
-        $user = $this->getUser();
-        // Get the image associated with the user
-        $image = $user->getImage();
-
-        $store = new Store();
-            if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($store);
-            $entityManager->flush();
-            $this->addFlash('success', 'Store created successfully!');
-            return $this->redirectToRoute('app_store_show_partner', ['id' => $store->getId()]);
-            
-
-        }
-
-        return $this->render('partner/store/new.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'image' => $image,
-        ]);
-    }
- 
-    #[Route('/show/{id?}', name: 'app_store_show_partner')]
-    public function showStore(?int $id, StoreRepository $storeRepository, RatingRepository $ratingRepository): Response
-    {//TODO: add the rating methode and test if it is first time create a new insert else do an edit 
-        $user = $this->getUser();
-        $image = $user->getImage();  
-            $store = $storeRepository->find($id);
-            // $this->addFlash('success', 'Store updated successfully!');
-            return $this->render('partner/store/show.html.twig', [
-            'user' => $user,
-            'image' => $image,
+        if ($store !== null) {
+            return $this->redirectToRoute('app_store_show_partner', [
+                'id' => $store->getId(),
+                'user' => $user,
+                // 'image' => $image
             ]);
-       
+        } else {
+            // Handle the case where the user doesn't have a store
+            // For example, you could redirect them to the new store page
+            return $this->redirectToRoute('app_store_new_partner');
+        }
+}
+
+
+#[Route('/new/store', name: 'app_store_new_partner', methods: ['GET', 'POST'])]
+public function newStore(Request $request,Security $security): Response
+{
+    $user = $this->getUser();
+    // Get the image associated with the user
+    $image = $user->getImage();
+
+    $store = new Store();
+    $user = $security->getUser();
+    $form = $this->createForm(StoreType::class, $store);
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $store->setUser($user);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($store);
+        $entityManager->flush();
+        $this->addFlash('success', 'Store created successfully!');
+        return $this->redirectToRoute('app_store_show_partner', ['id' => $store->getId()]);
+        
+
     }
 
-    #[Route('/edit/{id}', name: 'app_store_edit_partner', methods: ['GET', 'POST'])]
-    public function editStore(Request $request, Store $store, StoreRepository $storeRepository): Response
-    {
-        $user = $this->getUser();
-        // Get the image associated with the user
-        $image = $user->getImage();
+    return $this->render('partner/store/new.html.twig', [
+        'form' => $form->createView(),
+        'user' => $user,
+        'image' => $image,
+    ]);
+}
 
+#[Route('/show/{id?}', name: 'app_store_show_partner')]
+public function showStore(?int $id, StoreRepository $storeRepository, RatingRepository $ratingRepository): Response
+{//TODO: add the rating methode and test if it is first time create a new insert else do an edit 
+    $user = $this->getUser();
+    $image = $user->getImage();  
+    if ($id === null) {
+        return $this->redirectToRoute('app_store_new_partner');
+    } else {
+        $store = $storeRepository->find($id);
+        $rating = $ratingRepository->getAverageStoreRating($id);
+        // addflash
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $storeRepository->save($store, true);
-            $this->addFlash('success', 'Store updated successfully!');
-
-            return $this->redirectToRoute('app_partner', [], Response::HTTP_SEE_OTHER);
-
-        }
-
-        return $this->renderForm('partner/store/edit.html.twig', [
-            'store' => $store,
-            'form' => $form ,
-            'user' => $user,  
-            'image' => $image,    
+        // $this->addFlash('success', 'Store updated successfully!');
+        return $this->render('partner/store/show.html.twig', [
+        'store' => $store,
+        'rating' => $rating,
+        'user' => $user,
+        'image' => $image
         ]);
     }
+}
+
+#[Route('/edit/{id}', name: 'app_store_edit_partner', methods: ['GET', 'POST'])]
+public function editStore(Request $request, Store $store, StoreRepository $storeRepository): Response
+{
+    $user = $this->getUser();
+    // Get the image associated with the user
+    $image = $user->getImage();
+
+    $form = $this->createForm(StoreType::class, $store);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $storeRepository->save($store, true);
+        $this->addFlash('success', 'Store updated successfully!');
+
+        return $this->redirectToRoute('app_partner', [], Response::HTTP_SEE_OTHER);
+
+    }
+
+    return $this->renderForm('partner/store/edit.html.twig', [
+        'store' => $store,
+        'form' => $form ,
+        'user' => $user,  
+        'image' => $image,    
+    ]);
+}
     
 // .........................................Gestion Product Store..........................................................
 
@@ -146,6 +161,7 @@ class PartnerController extends AbstractController
     #[Route('/new/produit/{id}', name: 'app_product_new')]
     public function newProductinStore(Request $request, PersistenceManagerRegistry $doctrine, Security $security,$id): Response
     {
+        $user = $this->getUser();
         $entityManager = $doctrine->getManager();
         $store = $entityManager->getRepository(Store::class)->find($id);
 
@@ -154,6 +170,7 @@ class PartnerController extends AbstractController
         }
 
         $product = new Produit();
+        $product->setEtat(0);
         $form = $this->createForm(ProductType::class, $product);
 
         $form->handleRequest($request);
@@ -183,12 +200,15 @@ class PartnerController extends AbstractController
         $user = $this->getUser();
         $image = $user->getImage();
 
-        $store = $doctrine->getManager()->getRepository(Store::class)->findOneBy(['user' => $user]);       
+        $store = $doctrine->getManager()->getRepository(Store::class)->findOneBy(['user' => $user]); 
+        //get products by in the store 
+        
+        $products = $store->getProduit();
         
 
 
         return $this->render('partner/ListProductInStore.html.twig', [
-            'produits' => $produits,
+            'produits' => $products,
             'store' => $store,
             'user' =>$user
         ]);

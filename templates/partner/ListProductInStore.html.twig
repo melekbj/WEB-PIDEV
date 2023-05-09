@@ -60,8 +60,7 @@
 
                     <tr class="table">
                       <td>{{ product.nom }}</td>
-                      {% set imageUrl = vich_uploader_asset(product, 'imageFile') %}
-                      <td><img style="width:100px;" src="{{ asset(imageUrl) }}" alt="user-avatar"></td>
+                      <td><img style="width:100px;" src="" alt="user-avatar"></td>
                       <td>{{ product.prix }}.DT</td>
                       <td>{{ product.quantite }}</td>
                       {% if product.etat == 0 %}
@@ -85,7 +84,7 @@
                           </button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                          
-                          
+{#                           
                             <form action="{{path('app_updateProduct',{'id':product.id})}}">
                               <button class="dropdown-item">
                                 <i class='bx bx-block'></i>
@@ -98,8 +97,8 @@
                                 <i class='bx bx-block'></i>
                                 Remove
                               </button>
-                            </form>
-                            {% endif %}
+                            </form> #}
+                            {# {% endif %} #}
                             {# <a class="dropdown-item" href="#">Option 3</a> #}
                           </div>
                         </div>

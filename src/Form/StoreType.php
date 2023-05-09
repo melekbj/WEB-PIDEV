@@ -80,16 +80,16 @@ class StoreType extends AbstractType
             'mapped' => false, 
         ])               
         ->add('location', HiddenType::class)
-        // ->add('photo', FileType::class, [
-        //     'required' => false,
-        //     'label' => 'Profile Picture',
-        //     'data_class' => null,
-        // ])
-        ->add('imageFile', VichFileType::class, [
-            'required' => true,
-            'allow_delete' => false,
-            'download_uri' => true,
+        ->add('photo', FileType::class, [
+            'required' => false,
+            'label' => 'Profile Picture',
+            'data_class' => null,
         ])
+        // ->add('imageFile', VichFileType::class, [
+        //     'required' => true,
+        //     'allow_delete' => false,
+        //     'download_uri' => true,
+        // ])
         ->add('categorie', EntityType::class, [
             'class' => CategorieStore::class,
             'choice_label' => 'libelle',
