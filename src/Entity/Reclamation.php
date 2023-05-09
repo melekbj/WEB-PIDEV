@@ -7,18 +7,24 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("reclamation")]
     private ?int $id = null;
 
+
     #[ORM\Column(length: 50)]
+    #[Groups("reclamation")]
     private ?string $etat = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups("reclamation")]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255)]
@@ -26,6 +32,7 @@ class Reclamation
         pattern: '/\b\w+\b\s+\b\w+\b\s+\b\w+\b/',
         message: 'Description must contain at least 3 words.'
     )]
+    #[Groups("reclamation")]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
@@ -35,18 +42,21 @@ class Reclamation
     private ?Produit $produit = null;
 
     #[ORM\Column(name: "client_id")]
+    #[Groups("reclamation")]
     private ?int $client_id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
+    #[Groups("reclamation")]
     private ?User $admin = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("reclamation")]
     private  $image;
 
 
     #[ORM\ManyToOne(targetEntity: TypeReclamation::class, inversedBy: 'reclamations')]
+    #[Groups("reclamation")]
     private ?TypeReclamation $type = null;
-
     public function getId(): ?int
     {
         return $this->id;

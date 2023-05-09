@@ -13,7 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 class ReclamationController extends AbstractController
 {
     #[Route('/addReclamationProduit', name: 'app_reclamation')]
@@ -72,5 +74,84 @@ if ($user) {
             'form' => $form->createView(),
         ]);
     }
- 
+
+    #[Route('add_reclamation/{idUser}/{idCommande}/{etat}/{date}/{image}/{contenu}/{idProduit}/{idAdmin}/{type}', name: 'addreclamation')]
+    public function addReclamation(Request $request, EntityManagerInterface $entityManager,NormalizerInterface $Normalizer)
+    {
+        $reclamation = new Reclamation();
+        $reclamation->setClientId($request->get('idUser'));
+        $reclamation->setEtat($request->get('etat'));
+        $reclamation->setDate(new \DateTime($request->get('date')));
+        $reclamation->setDescription($request->get('contenu'));
+        $reclamation->setimage($request->get('image'));
+        echo('aaaaaaaaaaaaaaaaaaaa');
+        $typeId = $request->get('type');
+        $typeReclamation = $entityManager->getRepository(TypeReclamation::class)->find($typeId);
+        $reclamation->setType($typeReclamation);        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($reclamation);
+        $entityManager->flush();
+            $jsonContent = $Normalizer->normalize($reclamation, 'json', ['groups' => 'reclamations']);
+        return new Response(json_encode($jsonContent));
+    }
+
+    #[Route("/getReclamations", name: "getReclamations")]
+    public function getReclamations(SerializerInterface $serializer, NormalizerInterface $normalizer): Response
+    {
+        $reclamations = $this->getDoctrine()->getRepository(Reclamation::class)->findAll();
+        $reclamationsNormalises = $normalizer->normalize($reclamations, 'json', ['groups' => "reclamation"]);
+        $json = json_encode($reclamationsNormalises);
+        // $json = $serializer->serialize($reclamationsNormalises, 'json', ['groups' => "reclamations"]);
+        return new Response($json);
+    }
+    
+    #[Route("/updateReclamation/{id}/{etat}", name: "updateReclamations")]
+    public function updateReclamation($id, $etat): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        
+        // Find the Reclamation entity by its id
+        $reclamation = $entityManager->getRepository(Reclamation::class)->find($id);
+        
+        if (!$reclamation) {
+            throw $this->createNotFoundException(
+                'No reclamation found for id '.$id
+            );
+        }
+        
+        // Update the etat property of the Reclamation entity
+        $reclamation->setEtat($etat);
+        
+        // Save the updated entity to the database
+        $entityManager->flush();
+        
+        return new Response('Reclamation with id '.$id.' updated with etat '.$etat);
+    }
+    #[Route('/add_type_reclamation/{type}', name: 'addreclamationType')]
+    public function addReclamationType($type, EntityManagerInterface $entityManager, NormalizerInterface $normalizer) {
+        $typeReclamation = new TypeReclamation();
+        $typeReclamation->setNom($type);
+        $entityManager->persist($typeReclamation);
+        $entityManager->flush();
+        $jsonContent = $normalizer->normalize($typeReclamation, 'json');
+        return new Response(json_encode($jsonContent));
+    }
+    #[Route("/getReclamationTypes", name: "getReclamationTypes")]
+public function getReclamationTypes(SerializerInterface $serializer, NormalizerInterface $normalizer): Response
+{
+    $types = $this->getDoctrine()->getRepository(TypeReclamation::class)->findAll();
+    $typesNormalizes = $normalizer->normalize($types, 'json');
+    $json = json_encode($typesNormalizes);
+    // $json = $serializer->serialize($typesNormalizes, 'json');
+    return new Response($json);
+}
+
+#[Route("/getReclamationbyId/{id}", name: "getReclamationsbyId")]
+public function getReclamationbyId(SerializerInterface $serializer, NormalizerInterface $normalizer,$id): Response
+{
+    $reclamations = $this->getDoctrine()->getRepository(Reclamation::class)->findBy(['client_id' => $id]);
+    $reclamationsNormalises = $normalizer->normalize($reclamations, 'json', ['groups' => "reclamation"]);
+    $json = json_encode($reclamationsNormalises);
+    // $json = $serializer->serialize($reclamationsNormalises, 'json', ['groups' => "reclamations"]);
+    return new Response($json);
+}
 }

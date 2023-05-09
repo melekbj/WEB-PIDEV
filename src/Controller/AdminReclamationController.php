@@ -27,7 +27,7 @@ class AdminReclamationController extends AbstractController
     }
     
     #[Route('/admin/reclamation', name: 'adminReclamation')]
-    public function adminReclamations(Request $request): Response
+    public function adminReclamations(t $requestReques): Response
     {
         $reclamations = $this->getDoctrine()->getRepository(Reclamation::class)->findAll();
     
