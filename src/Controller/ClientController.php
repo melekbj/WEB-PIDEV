@@ -23,6 +23,7 @@ use App\Repository\EvenementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReservationRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\DetailCommandeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,17 +39,17 @@ class ClientController extends AbstractController
 {
     
     
-    #[Route('/', name: 'app_client_index')]
-    public function index(): Response
-    {
-        $user = $this->getUser();
-        // Get the image associated with the user
-        $image = $user->getImage();
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
-            'image' => $image,
-        ]);
-    }
+    // #[Route('/', name: 'app_client_index')]
+    // public function index(): Response
+    // {
+    //     $user = $this->getUser();
+    //     // Get the image associated with the user
+    //     $image = $user->getImage();
+    //     return $this->render('client/index.html.twig', [
+    //         'controller_name' => 'ClientController',fpa
+    //         'image' => $image,
+    //     ]);
+    // }
     
 
     #[Route('/', name: 'app_client_index')]
@@ -97,10 +98,6 @@ class ClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $reclamation->setUser($user);
-            $reclamation->setDate(new \DateTime());
-            $reclamation->setEtat("pending");
-            $reclamation->setProduit($entityManager->getRepository(DetailCommande::class)->find($id)->getProduit());
             $reclamation->setCommande($entityManager->getRepository(DetailCommande::class)->find($id)->getCommande());
             $entityManager->persist($reclamation);
             $entityManager->flush();
@@ -121,13 +118,11 @@ class ClientController extends AbstractController
     public function ListReclamations(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $user = $this->getUser();
-        $userId = $user->getId();
         // Get the image associated with the user
         $image = $user->getImage();
 
 
         return $this->render('client/historiqueReclamation.html.twig', [
-            'reclamations' => $reclamations,
             'image' => $image,
         ]);
     }
@@ -199,7 +194,6 @@ class ClientController extends AbstractController
             $produit = $doctrine->getRepository(Produit::class)->find($id);
             if ($produit->getQuantite() > $cart[$id]) {
 
-                $cart[$id]++;
             } else {
                 $session->addFlash('carterror', 'you have exceeded the availeble quantity');
                 // $this->addFlash('error', 'New password and confirm password do not match.');
@@ -226,21 +220,11 @@ class ClientController extends AbstractController
     {
         $cart = $session->get('cart', []);
         if ($cart[$id] > 1) {
-            $cart[$id]--;
         } else {
-            unset($cart[$id]);
         }
         $session->set('cart', $cart);
-        $referer = $request->headers->get('referer');
 
         return $this->redirect($referer);
-
-
-
-        //------test purpose to clear all stored items inside the session--------
-        //   $session->clear();
-        //---------test session stored item cart----------
-        //  dd($session->get('cart'));
 
 
     }
@@ -263,7 +247,6 @@ class ClientController extends AbstractController
             if ($produit) {
                 $produits[] = [
                     'produit' => $produit,
-                    'quantity' => $quantity,
                 ];
             }
         }
@@ -292,8 +275,6 @@ class ClientController extends AbstractController
 
         $totalPrice = 0;
         $command = new Commande();
-        $command->setUser($user);
-        $command->setDestination($request->request->get('destination'));
         if (strlen($request->request->get('destination')) <= 10) {
             $session->set('carterror', 'Destination not set or too short.');
             return $this->redirectToRoute('app_cartview');
@@ -309,12 +290,7 @@ class ClientController extends AbstractController
             }
             $price = $product->getPrix() * $quantity;
             $totalPrice += $price;
-            $detailCommande = new DetailCommande();
-            $detailCommande->setCommande($command);
-            $detailCommande->setProduit($product);
             $detailCommande->setStore($product->getStores()->first());
-            $detailCommande->setQuantite($quantity);
-            $detailCommande->setPrixTotal($price);
             $detailCommande->setEtat('Pending');
         }
 
@@ -348,12 +324,10 @@ class ClientController extends AbstractController
             $produit = $doctrine->getRepository(Produit::class)->find($itemid);
             $produits[] = [
                 'produit' => $produit,
-                'quantity' => $quantity,
             ];
         }
         $command = $session->get('commande');
         $paymentForm = $this->createForm(PaymentType::class);
-        $paymentForm->handleRequest($request);
         if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
             $paymentData = $paymentForm->getData();
 
@@ -361,9 +335,6 @@ class ClientController extends AbstractController
             Stripe::setApiKey('sk_test_51Mf0S6FwJ7wXIwXewSc2z6FyXoFWAJZFy0Iuk4OZxzTVzLENEvBnnqug21baEIiV0MEDXTYl0y4Ajnp2LDWRZtC300mrwZe2j2');
             // create a card object with the informations
             $card = new Card();
-            $card->number = $paymentData['cardNumber']; // 16 numere
-             $card->exp_month = $paymentData['expirationMonth']; // 01-12
-            $card->exp_year = $paymentData['expirationYear']; // > current year
             $card->cvc = $paymentData['cvc']; // secret code
             $card->address_zip = '12345';
             // Create a new Stripe customer
@@ -403,11 +374,6 @@ class ClientController extends AbstractController
                     $product->setQuantite($product->getQuantite() - $quantity);
                     $em->persist($product);
                     $detailCommande = new DetailCommande();
-                    $detailCommande->setCommande($command);
-                    $detailCommande->setProduit($product);
-                    $detailCommande->setStore($product->getStores()->first());
-                    $detailCommande->setQuantite($quantity);
-                    $detailCommande->setPrixTotal($price);
                     $detailCommande->setEtat('Pending');
                     $em->persist($detailCommande);
                 }

@@ -66,7 +66,6 @@ class PartnerController extends AbstractController
 
             if ($store !== null) {
                 return $this->redirectToRoute('app_store_show_partner', [
-                    'id' => $store->getId(),
                     
                     // 'image' => $image
                 ]);
@@ -86,8 +85,7 @@ class PartnerController extends AbstractController
         $image = $user->getImage();
 
         $store = new Store();
-                if ($form->isSubmitted() && $form->isValid()) {
-            $store->setUser($user);
+            if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($store);
             $entityManager->flush();
@@ -109,19 +107,12 @@ class PartnerController extends AbstractController
     {//TODO: add the rating methode and test if it is first time create a new insert else do an edit 
         $user = $this->getUser();
         $image = $user->getImage();  
-        if ($id === null) {
-            return $this->redirectToRoute('app_store_new_partner');
-        } 
             $store = $storeRepository->find($id);
-            $rating = $ratingRepository->getAverageStoreRating($id);
-            // addflash
-
             // $this->addFlash('success', 'Store updated successfully!');
             return $this->render('partner/store/show.html.twig', [
-            'store' => $store,
-            'rating' => $rating,
             'user' => $user,
-            'image' => $image
+            'image' => $image,
+            ]);
        
     }
 
@@ -169,7 +160,7 @@ class PartnerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $store->addProduit($product);
             $entityManager->persist($product);
-            $entityManager->flush()
+            $entityManager->flush();
 
             $this->addFlash('success', 'Product created successfully!');
             return $this->redirectToRoute('app_products_store_liste');
@@ -193,7 +184,7 @@ class PartnerController extends AbstractController
         $image = $user->getImage();
 
         $store = $doctrine->getManager()->getRepository(Store::class)->findOneBy(['user' => $user]);       
-        }
+        
 
 
         return $this->render('partner/ListProductInStore.html.twig', [
@@ -212,19 +203,11 @@ class PartnerController extends AbstractController
         $user=$this->getUser();
         $store = $doctrine->getRepository(Store::class)->findBy(['user'=>$user->getId()]);
         // Get the query parameters from the URL
-        $etat = $request->query->get('etat');
-        $order = $request->query->get('prixOrder');
-        $etatswitch = $request->query->get('etatswitch');
         $commandedetail = $request->query->get('commandedetail');
         $displaydetail = null;
         // neeeds to completed the prix filter  gonna update and try few things and comeback to this wael3
-        // Get the commandes and details from the database
-
-        //  $commande = $doctrine->getRepository(Commande::class)->findByStore($client,$etat,$min,$max,$order);
         if ($commandedetail !== null && ($etatswitch === "Completed" || $etatswitch === "Pending"  || $etatswitch === "Progress")) {
             $detail = $doctrine->getRepository(DetailCommande::class)->find($commandedetail);
-
-            $detail->setEtat($etatswitch);
             $doctrine->getManager()->persist($detail);
             $doctrine->getManager()->flush();
             $entityManager = $doctrine->getManager();
@@ -242,9 +225,6 @@ class PartnerController extends AbstractController
             foreach ($details as $d) {
                 if ($d->getEtat() === "Pending") {
                     $countPending++;
-                }
-                if ($d->getEtat() === "Progress") {
-                    $countProgress++;
                 }
                 if ($d->getEtat() === "Completed" || $d->getEtat() === "Canceled" ) {
                     $countCompleted++;;

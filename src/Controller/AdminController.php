@@ -18,8 +18,9 @@ use App\Entity\Reservation;
 use App\Form\FormEventType;
 use App\Entity\CategorieStore;
 use App\Entity\DetailCommande;
-use App\Service\QrcodeService;
 use App\Entity\TypeReclamation;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CategorieStoreRepository;
 use App\Repository\TypeReclamationRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +36,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'app_admin')]
-    public function index(QrcodeService $qrcodeService): Response
+    public function index(): Response
     {
         $user = $this->getUser();
         $image = $user->getImage();
@@ -56,28 +57,18 @@ class AdminController extends AbstractController
 
 
     #[Route('/liste_des_utilisateurs', name: 'app_users')]
-    public function ListeU(PaginatorInterface $paginator, UserRepository $userRepository, Request $request): Response
+    public function ListeU( UserRepository $userRepository, Request $request): Response
     {
         // Get the current user
         $user = $this->getUser();
-
+        //find all users 
+        $users = $userRepository->findAll();
         // Get the image associated with the user
+        $image = $user->getImage();
 
-        // Get all users except admins and blocked users, ordered by name
-        $usersQuery = $userRepository->createQueryBuilder('u')
-            ->where('u.roles LIKE :roles1 OR u.roles LIKE :roles2')
-            ->andWhere('u.etat <> :etat')
-            ->orderBy('u.nom', 'ASC')
-            ->setParameters([
-                'roles1' => '%ROLE_CLIENT%',
-                'roles2' => '%ROLE_PARTNER%',
-                'etat' => 1,
-            ])
-            ->getQuery();
 
-        // Paginate users
+        
        
-
         return $this->render('admin/ListeUsers.html.twig', [
             'users' => $users,
         ]);
@@ -85,7 +76,7 @@ class AdminController extends AbstractController
 
 
     #[Route('/liste_des_partenaires', name: 'app_partners')]
-    public function ListeP(Request $request,PaginatorInterface $paginator): Response
+    public function ListeP(Request $request): Response
     {
         // Get the current user
         $user = $this->getUser();
@@ -95,9 +86,8 @@ class AdminController extends AbstractController
         //recuperer le repository
         $repository = $this->getDoctrine()->getRepository(User::class);
         //utiliser findAll() pour recuperer toutes les classes
-        
-        
-
+        $users = $repository->findByRoles('ROLE_PARTNER');
+    
         return $this->render('admin/ListePartners.html.twig', [
             'users' => $users,
         ]);
@@ -538,7 +528,7 @@ class AdminController extends AbstractController
 // .........................................Gestion Reclamation..........................................................
 
     #[Route('/liste_des_reclamation', name: 'app_reclamations_list')]
-    public function ListeReclamations(Request $request,PaginatorInterface $paginator,EntityManagerInterface $entityManager): Response
+    public function ListeReclamations(Request $request,EntityManagerInterface $entityManager): Response
     {
             // Get the current user
             $user = $this->getUser();
@@ -638,41 +628,11 @@ class AdminController extends AbstractController
     }
 
 
-    #[Route('/update_Reclamation_type/{id}', name: 'app_updatetypeReclamation')]
-    public function updateReclamationType($id, Request $request, TypeReclamationRepository $rep, ManagerRegistry $doctrine): Response
-    {
-        // Get the current user
-        $user = $this->getUser();
-        // Get the image associated with the user
-        $image = $user->getImage();
-        // récupérer la classe à modifier
-        $reclamations = $rep->find($id);
-        // créer un formulaire
-        $form = $this->createForm(ReclamationTypeType::class, $reclamations);
-        // récupérer les données saisies
-        $form->handleRequest($request);
-        // vérifier si le formulaire est soumis et valide
-        if ($form->isSubmitted() && $form->isValid()) {
-            // récupérer les données saisies
-            $reclamations = $form->getData();
-            // persister les données
-            $rep = $doctrine->getManager();
-            $rep->persist($reclamations);
-            $rep->flush();
-            //flash message
-            $this->addFlash('success', 'Event updated successfully!');
-            return $this->redirectToRoute('app_types_reclamation_liste');
-        }
-        return $this->render('admin/reclamation/editTypeReclamation.html.twig', [
-            'form' => $form->createView(),
-            'image' => $image,
-        ]);
-    }
 
 // ................................................ Gesion Produits..................................................................................................... 
 
     #[Route('/liste_des_produits', name: 'app_products_list')]
-    public function ListeProducts(Request $request,PaginatorInterface $paginator,EntityManagerInterface $entityManager): Response
+    public function ListeProducts(Request $request,EntityManagerInterface $entityManager): Response
     {
             // Get the current user
             $user = $this->getUser();
@@ -682,30 +642,17 @@ class AdminController extends AbstractController
             $prodRepo = $entityManager->getRepository(Produit::class);
             $produits = $prodRepo->findAll();
 
-            $catProd = new Categorie();
-            $form = $this->createForm(CategorieProduitType::class, $catProd);
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($catProd);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Category added successfully.');
-
-                return $this->redirectToRoute('app_products_list');
-            }
+            
             
 
             return $this->render('admin/produit/listeProduit.html.twig', [
                 'image' => $image,
                 'produits' => $produits,
-                'typeForm' => $form->createView(),
             ]);
     }
 
     #[Route('/liste_des_categories_produits', name: 'app_category_products_list')]
-    public function ListeCatProducts(Request $request,PaginatorInterface $paginator,EntityManagerInterface $entityManager): Response
+    public function ListeCatProducts(Request $request,EntityManagerInterface $entityManager): Response
     {
             // Get the current user
             $user = $this->getUser();

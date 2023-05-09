@@ -168,10 +168,7 @@
                                         </td> #}
                                         <td>
                                         {# {{ detail.produit.nom }} #}
-                                       {% if detail.produit.photo %}
-														{% set imageUrl = vich_uploader_asset(detail.produit, 'imageFile') %}
-														<img style="width:60px;" src="{{ asset(imageUrl) }}" alt="img" />
-													{% endif %}
+														<img style="width:60px;" src="" alt="img" />
                                         
                                         </td>
                                         <td>{{ detail.store.nom }}</td>
